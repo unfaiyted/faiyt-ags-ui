@@ -1,0 +1,326 @@
+@use "mixins" as mixins;
+@use "fallback/material" as material;
+@use "sass:color";
+@use "colors" as colors;
+
+* {
+  selection {
+    background-color: material.$secondary;
+    color: material.$onSecondary;
+  }
+
+  caret-color: colors.$onLayer2;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+menu {
+  @include mixins.small-rounding;
+  border: 1px solid
+    color.mix(material.$surfaceContainer, material.$onBackground, 80%); // I hate this
+  padding: 0.681rem;
+  background: color.adjust($color: material.$surfaceContainer, $alpha: -1);
+  color: material.$onSurface;
+  -gtk-outline-radius: 1.159rem;
+
+  animation-name: appear;
+  animation-duration: 40ms;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+}
+
+menubar > menuitem {
+  border-radius: 0.545rem;
+  -gtk-outline-radius: 0.545rem;
+  min-width: 13.636rem;
+  min-height: 2.727rem;
+}
+
+menu > menuitem {
+  padding: 0.4em 1.5rem;
+  background: transparent;
+  transition: 0.2s ease background-color;
+  border-radius: 0.545rem;
+  -gtk-outline-radius: 0.545rem;
+}
+
+menu > menuitem:hover,
+menu > menuitem:focus {
+  background-color: colors.$layer2Hover;
+}
+
+menu > menuitem:active {
+  background-color: colors.$layer2Active;
+}
+
+radio {
+  @include mixins.full-rounding;
+  margin: 0.273rem;
+  min-width: 15px;
+  min-height: 15px;
+  border: 0.068rem solid material.$outline;
+}
+
+// radio:first-child {
+//     background-color: red;
+// }
+
+radio:checked {
+  min-width: 8px;
+  min-height: 8px;
+  background-color: material.$onPrimary;
+  border: 0.477rem solid material.$primary;
+}
+
+tooltip {
+  animation-name: appear;
+  animation-duration: 100ms;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  @include mixins.normal-rounding;
+  background-color: color.adjust($color: material.$inverseSurface, $alpha: -1);
+  color: material.$inverseOnSurface;
+}
+
+/////////////////////////////////////////
+// emoji chooser structure
+// popover
+// ├── box.emoji-searchbar
+// │   ╰── entry.search
+// ╰── box.emoji-toolbar
+//     ├── button.image-button.emoji-section
+//     ├── ...
+//     ╰── button.image-button.emoji-section
+
+popover {
+  @include mixins.elevation-border-softer;
+  padding: 0.681rem;
+  background: material.$surfaceContainerHigh;
+  color: material.$onSurface;
+  border-radius: 1.159rem;
+  -gtk-outline-radius: 1.159rem;
+
+  animation-name: appear;
+  animation-duration: 40ms;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+}
+
+/////////////////////////////////////////
+
+.configtoggle-box {
+  padding: 0.205rem 0.341rem;
+}
+
+.switch-bg {
+  @include mixins.element_decel;
+  @include mixins.full-rounding;
+  border: 0.136rem solid material.$onSurface;
+  min-width: 2.864rem;
+  min-height: 1.637rem;
+}
+
+.switch-bg-true {
+  background-color: material.$primary;
+  border: 0.136rem solid material.$primary;
+}
+
+.switch-fg {
+  @include mixins.full-rounding;
+  @include mixins.menu_decel;
+  background-color: material.$onSurface;
+  color: colors.$layer1;
+  min-width: 0.819rem;
+  min-height: 0.819rem;
+  margin-left: 0.477rem;
+}
+
+.switch-fg-true {
+  background-color: material.$onPrimary;
+  color: material.$primary;
+  min-width: 1.431rem;
+  min-height: 1.431rem;
+  margin-left: 1.431rem;
+}
+
+.switch-fg-toggling-false {
+  @include mixins.menu_decel;
+  min-width: 1.636rem;
+  min-height: 0.819rem;
+}
+
+.segment-container {
+  @include mixins.full-rounding;
+  border: 0.068rem solid material.$outline;
+}
+
+.segment-container > *:first-child {
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px;
+}
+
+.segment-container > * {
+  border-right: 0.068rem solid material.$outline;
+  padding: 0.341rem 0.682rem;
+}
+
+.segment-container > *:last-child {
+  border-right: 0rem solid transparent;
+  border-top-right-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+}
+
+.segment-btn {
+  color: material.$onSurface;
+}
+
+.segment-btn:focus,
+.segment-btn:hover {
+  background-color: colors.$layer0Hover;
+}
+
+.segment-btn-enabled {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+}
+
+.segment-btn-enabled:hover,
+.segment-btn-enabled:focus {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+}
+
+.multipleselection-container {
+}
+
+.multipleselection-btn {
+  @include mixins.small-rounding;
+  padding: 0rem 0.341rem;
+  border: 0.034rem solid material.$outline;
+  color: material.$onSurface;
+}
+
+.multipleselection-btn:focus,
+.multipleselection-btn:hover {
+  background-color: colors.$layer0Hover;
+  color: material.$onSurface;
+}
+
+.multipleselection-btn-enabled {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+}
+
+.multipleselection-btn-enabled:hover,
+.multipleselection-btn-enabled:focus {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+}
+
+.gap-v-5 {
+  min-height: 0.341rem;
+}
+
+.gap-h-5 {
+  min-width: 0.341rem;
+}
+
+.gap-v-10 {
+  min-height: 0.682rem;
+}
+
+.gap-h-10 {
+  min-width: 0.682rem;
+}
+
+.gap-v-15 {
+  min-height: 1.023rem;
+}
+
+.gap-h-15 {
+  min-width: 1.023rem;
+}
+
+.tab-btn {
+  @include mixins.small-rounding;
+  @include mixins.element_decel;
+  min-height: 2.5rem;
+  color: colors.$onLayer0;
+}
+
+.tab-btn:hover {
+  background-color: colors.$layer0Hover;
+}
+
+.tab-btn:focus {
+  background-color: material.$surfaceContainerLow;
+}
+
+.tab-btn-active > box > label {
+  color: material.$primary;
+}
+
+.tab-indicator {
+  transition: 180ms ease-in-out; // doesn't look that good, but it syncs with the gtkstack
+  min-height: 0.205rem;
+  padding: 0rem 1.023rem;
+  color: material.$primary;
+}
+
+.tab-icon {
+  @include mixins.element_decel;
+  @include mixins.full-rounding;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  font-size: 1.406rem;
+  color: material.$onSurface;
+}
+
+.tab-icon-active {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+}
+
+.tab-icon-expandable {
+  transition: 0ms;
+  @include mixins.full-rounding;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  font-size: 1.406rem;
+  color: material.$onSurface;
+  padding: 0rem;
+}
+
+.tab-icon-expandable-active {
+  background-color: material.$secondaryContainer;
+  color: material.$onSecondaryContainer;
+  padding: 0rem 0.545rem;
+  min-width: 9.545rem;
+}
+
+widget {
+  @include mixins.small-rounding;
+}
+
+.spinbutton {
+  @include mixins.small-rounding;
+  background-color: colors.$layer2;
+  padding: 0.341rem;
+  entry {
+    color: colors.$onLayer2;
+    margin: 0.136rem 0.273rem;
+  }
+  button {
+    margin-left: 0.205rem;
+    padding: 0.136rem;
+  }
+}
+

@@ -1,0 +1,41 @@
+// Modern SCSS using @use
+@use "sass:math";
+@use "fallback/material" as material;
+@use "colors" as colors;
+@use "mixins" as mixins;
+@use "classes" as classes;
+@use "./common" as common;
+
+// Components
+@use "./bar";
+// @use "./cheatsheet";
+// @use "./desktopbackground";
+// @use "./dock";
+// @use "./osd";
+// @use "./overview";
+// @use "./osk";
+// @use "./sidebars";
+// @use "./session";
+// @use "./notifications";
+// @use "./music";
+
+// Reset styles
+*:not(popover) {
+  all: unset;
+}
+
+// Classes for interaction
+.growingRadial {
+  transition: 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.fadingRadial {
+  transition: 50ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sidebar-pinned {
+  margin: 0rem;
+  border-radius: 0rem;
+  border-bottom-right-radius: mixins.$rounding_large;
+  border: 0rem solid;
+}

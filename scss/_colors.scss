@@ -1,0 +1,111 @@
+@use "fallback/material" as material;
+@use "sass:color";
+
+$rootTransparency: 0.22; // Transparency = 1 - opacity
+$transparency: 0.75;
+
+// Transparent versions
+@if material.$transparent == True {
+  $background: transparentize($background, $rootTransparency);
+  $surface: transparentize($surface, $transparency);
+  $surfaceDim: transparentize($surfaceDim, $transparency);
+  $surfaceBright: transparentize($surfaceBright, $transparency);
+  $surfaceContainerLowest: transparentize(
+    $surfaceContainerLowest,
+    $transparency
+  );
+  $surfaceContainerLow: transparentize($surfaceContainerLow, $transparency);
+  $surfaceContainer: transparentize($surfaceContainer, $transparency);
+  $surfaceContainerHigh: transparentize($surfaceContainerHigh, $transparency);
+  $surfaceContainerHighest: transparentize(
+    $surfaceContainerHighest,
+    $transparency
+  );
+  $surfaceVariant: transparentize($surfaceVariant, $transparency);
+  $inverseSurface: transparentize($inverseSurface, $transparency);
+  $surfaceTint: transparentize($surfaceTint, $transparency);
+}
+
+// Others
+$subtext: material.$outline;
+$actiontext: color.mix(material.$onBackground, material.$background, 85%);
+$black: black;
+$white: white;
+
+/// Color mappings for more chaotic, dynamic colors like the average rice ///
+// General
+$layer0: material.$background;
+$onLayer0: material.$onBackground;
+$layer0Hover: color.mix($layer0, $onLayer0, 85%);
+$layer0Active: material.$surfaceContainerHigh;
+$onLayer0Active: material.$onSurface;
+$onLayer0Inactive: color.mix($onLayer0, $layer0, 70%);
+$layer1: material.$surfaceContainerLow;
+$onLayer1: material.$onSurface;
+$onLayer1Inactive: color.mix($onLayer1, $layer1, 45%);
+$onLayer1: material.$onSurfaceVariant;
+$layer2: color.mix(
+  material.$surfaceContainer,
+  material.$surfaceContainerHigh,
+  55%
+);
+$onLayer2: material.$onSurface;
+$layer3: material.$surfaceContainerHigh;
+$onLayer3: material.$onSurface;
+$layer1Hover: color.mix($layer1, $onLayer1, 85%);
+$layer1Active: color.mix($layer1, $onLayer1, 70%);
+$layer2Hover: color.mix($layer2, $onLayer2, 90%);
+$layer2Active: color.mix($layer2, $onLayer2, 80%);
+$layer3Hover: color.mix($layer3, $onLayer3, 90%);
+$layer3Active: color.mix($layer3, $onLayer3, 80%);
+// Elements
+$windowtitleOnLayer0Inactive: $onLayer0Inactive;
+$windowtitleOnLayer0: $onLayer0;
+$barspacerightOnLayer0: $onLayer0;
+$timeOnLayer1: $onLayer1;
+$dateOnLayer1: $onLayer1;
+$ramOnLayer1: $onLayer1;
+$ramLayer2: material.$secondaryContainer;
+$ramOnLayer2: material.$onSecondaryContainer;
+$swapOnLayer1: $onLayer1;
+$swapLayer2: material.$secondaryContainer;
+$swapOnLayer2: material.$onSecondaryContainer;
+$cpuOnLayer1: $onLayer1;
+$cpuLayer2: material.$secondaryContainer;
+$cpuOnLayer2: material.$onSecondaryContainer;
+$musicOnLayer1: $onLayer1;
+$musicLayer2: material.$secondaryContainer;
+$musicOnLayer2: material.$onSecondaryContainer;
+$utilsLayer2: $layer2;
+$utilsOnLayer2: $onLayer2;
+$battOnLayer1: $onLayer1;
+$battLayer2: material.$secondaryContainer;
+$battOnLayer2: material.$onSecondaryContainer;
+$workspaceOnLayer1Inactive: $onLayer1Inactive;
+$workspaceLayer3: material.$primary;
+$workspaceOnLayer3: material.$onPrimary;
+$workspaceOnLayer2: material.$onSecondaryContainer;
+$trayOnLayer0: $onLayer0;
+$cheatsheetTitle: material.$onSecondaryContainer;
+$cheatsheetColors: (
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer,
+  material.$onSecondaryContainer
+);
+
+$sessionColors: (
+  $onLayer1,
+  $onLayer1,
+  $onLayer1,
+  $onLayer1,
+  $onLayer1,
+  $onLayer1,
+  $onLayer1
+);
+$brightnessOnLayer0: $onLayer0;
+$volumeOnLayer0: $onLayer0;

@@ -1,0 +1,19 @@
+{
+  "name": "faiyt-ags-ui",
+  "version": "1.0.0",
+  "description": "UI Recreation for AGS/Hyprland",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ags",
+    "typescript",
+    "gtk"
+  ],
+  "author": "Dane L Miller",
+  "license": "ISC",
+  "dependencies": {
+    "material-colors": "^1.2.6"
+  }
+}
