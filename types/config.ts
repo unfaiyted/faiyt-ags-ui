@@ -1,3 +1,5 @@
+import { BarMode } from "../widget/bar/types";
+
 export interface AiConfig {
   defaultGPTProvider: string;
   defaultTemperature: number;
@@ -216,12 +218,6 @@ export interface KeybindsConfig {
     prevTab: string;
     cycleTab: string;
   };
-}
-
-export enum BarMode {
-  Normal = "normal",
-  Focus = "focus",
-  Nothing = "nothing",
 }
 
 export interface BarConfig {

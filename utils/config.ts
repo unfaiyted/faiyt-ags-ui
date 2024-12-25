@@ -1,7 +1,8 @@
 import GLib from "gi://GLib";
 import { deepMerge } from "./objects.js";
 import userConfigOptions from "../user-options.js";
-import { ConfigOptions, BarMode, MergedConfig } from "../types/config";
+import { ConfigOptions, MergedConfig } from "../types/config";
+import { BarMode } from "../widget/bar/types";
 
 // Default options.
 // Add overrides in ~/.config/ags/user_options.js

@@ -2,7 +2,7 @@ import { Gdk } from "astal/gtk3";
 import { Variable } from "astal";
 import Hypr from "gi://AstalHyprland";
 import config from "./config";
-import { BarMode } from "../types/config";
+import { BarMode } from "../widget/bar/types";
 
 const hypr = Hypr.get_default();
 

@@ -3,16 +3,15 @@ import { Widget } from "astal/gtk3";
 import SystemTray from "gi://AstalTray";
 import { Variable } from "astal";
 
-export interface SystemTrayItemProps extends Widget.ButtonProps {
+export interface TrayItemProps extends Widget.ButtonProps {
   value: SystemTray.TrayItem;
   index?: number;
   array?: SystemTray.TrayItem[];
+  key?: string;
 }
 
-export default function SystemTrayItem(
-  systemTrayItemProps: SystemTrayItemProps,
-) {
-  const { setup, child, value, ...props } = systemTrayItemProps;
+export default function TrayItem(trayItemProps: TrayItemProps) {
+  const { setup, key, child, value, ...props } = trayItemProps;
   const trayItem = Variable(value);
 
   const handleItemClick = (button: Widget.Button, event: Astal.ClickEvent) => {

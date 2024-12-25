@@ -1,40 +1,34 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk3";
-import { Widget } from "astal/gtk3";
-import WorkspaceContents from "../modules/workspaces/WorkspaceContents";
-import config from "../../../utils/config";
-import { getScrollDirection } from "../../../utils/utils";
+export * from "./types";
+export * from "./modes/normal";
+export * from "./modes/focus";
+
+import { BaseWorkspacesProps } from "./types";
+import WorkspaceModeContent from "./modes";
+import { BarMode } from "../../types";
+import { handleHyprResponse } from "../../../../utils/handlers";
+import config from "../../../../utils/config";
+import { Variable } from "astal";
+import { Widget, Astal, Gdk } from "astal/gtk3";
+import { getScrollDirection } from "../../../../utils/utils";
+import { ClickButtonPressed } from "../../types";
 import Hypr from "gi://AstalHyprland";
-import Gio from "gi://Gio";
-export interface NormalBarModeProps extends Widget.EventBoxProps {}
 
-enum ClickButtonPressed {
-  LEFT = 1,
-  MIDDLE = 2,
-  RIGHT = 3,
-}
-
-export default function NormalBarMode(normalBarModeProps: NormalBarModeProps) {
-  const { setup, child, ...props } = normalBarModeProps;
+export default function Workspaces(workspacesProps: BaseWorkspacesProps) {
+  const { setup, mode, ...props } = workspacesProps;
 
   const hypr = Hypr.get_default();
-
-  const handleHyprResponse: Gio.AsyncReadyCallback<Hypr.Hyprland> = (
-    source,
-    response,
-    data,
-  ) => {
-    print(data);
-  };
+  const activeBarMode = Variable(config.bar.default);
 
   const handleScroll = (self: Widget.EventBox, event: Astal.ScrollEvent) => {
     const scrollDirection = getScrollDirection(event);
 
+    // todo: add config option to reverse scroll direction
     if (scrollDirection === Gdk.ScrollDirection.UP) {
       print("scroll up");
-      hypr.message_async(`dispatch workspace -1`, handleHyprResponse);
+      hypr.message_async(`dispatch workspace +1`, handleHyprResponse);
     } else if (scrollDirection === Gdk.ScrollDirection.DOWN) {
       print("scroll down");
-      hypr.message_async(`dispatch workspace +1`, handleHyprResponse);
+      hypr.message_async(`dispatch workspace -1`, handleHyprResponse);
     }
   };
 
@@ -44,6 +38,7 @@ export default function NormalBarMode(normalBarModeProps: NormalBarModeProps) {
 
     if (event.button === ClickButtonPressed.LEFT.valueOf()) {
     } else if (event.button === ClickButtonPressed.MIDDLE.valueOf()) {
+      // todo: will need to do after adding osk
       // toggleWindowOnAllMonitors('osk'); // on screen keyboard
     } else if (event.button === ClickButtonPressed.RIGHT.valueOf()) {
       // App.toggleWindow('overview');
@@ -62,15 +57,18 @@ export default function NormalBarMode(normalBarModeProps: NormalBarModeProps) {
 
       const widgetWidth = self.get_allocation().width;
       const wsId = Math.ceil((event.x * config.workspaces.shown) / widgetWidth);
+
+      hypr.message_async(`dispatch workspace ${wsId}`, handleHyprResponse);
       // Utils.execAsync([
       // `${App.configDir}/scripts/hyprland/workspace_action.sh`,
       // "workspace",
       // `${wsId}`,
       // ]).catch(print);
     });
+
     self.connect("button-press-event", (self, event: Gdk.EventButton) => {
       if (event.button === ClickButtonPressed.LEFT.valueOf()) {
-        const clicked = true;
+        clicked = true;
 
         const widgetWidth = self.get_allocation().width;
         const wsId = Math.ceil(
@@ -92,23 +90,28 @@ export default function NormalBarMode(normalBarModeProps: NormalBarModeProps) {
   };
 
   return (
-    <eventbox
-      {...props}
-      onScroll={handleScroll}
-      onClick={handleClick}
-      setup={eventBoxSetup}
-    >
-      <box homogeneous={true} className="bar-group-margin">
-        <box
-          className="bar-group bar-group-standalone bar-group-pad"
-          css={`
-            min-width: 2px;
-          `}
-        >
-          <WorkspaceContents shown={config.workspaces.shown} />
+    <box homogeneous={true}>
+      <eventbox
+        {...props}
+        onScroll={handleScroll}
+        onClick={handleClick}
+        setup={eventBoxSetup}
+      >
+        <box homogeneous={true} className="bar-group-margin">
+          <box
+            className="bar-group bar-group-standalone bar-group-pad"
+            css={`
+              min-width: 2px;
+            `}
+          >
+            <WorkspaceModeContent
+              mode={mode}
+              shown={config.workspaces.shown}
+              initilized={false}
+            />
+          </box>
         </box>
-      </box>
-      Normal bar mode
-    </eventbox>
+      </eventbox>
+    </box>
   );
 }

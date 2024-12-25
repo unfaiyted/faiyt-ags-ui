@@ -2,7 +2,7 @@ import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
 import SystemTray from "gi://AstalTray";
 import { Variable } from "astal";
-import SystemTrayItem from "./tray/SystemTrayItem";
+import TrayItem from "./item";
 
 export interface TrayModuleProps extends Widget.BoxProps {}
 
@@ -19,7 +19,7 @@ export default function Tray(trayModuleProps: TrayModuleProps) {
   });
 
   const mapTrayItem = (value: SystemTray.TrayItem) => {
-    return <SystemTrayItem value={value} key={value.get_name()} />;
+    return <TrayItem value={value} key={value.get_id()} />;
   };
 
   const trayContent = (
