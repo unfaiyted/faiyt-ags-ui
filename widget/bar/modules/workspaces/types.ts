@@ -1,10 +1,10 @@
 import { Widget, Astal } from "astal/gtk3";
 import { BarMode } from "../../types";
-import { Variable } from "astal";
+import { Variable, Binding } from "astal";
 import Hypr from "gi://AstalHyprland";
 
 export interface BaseWorkspacesProps extends Widget.DrawingAreaProps {
-  mode: BarMode;
+  mode: Binding<BarMode>;
   shown: number;
   initilized: Boolean;
 }

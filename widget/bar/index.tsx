@@ -1,21 +1,35 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import Battery from "gi://AstalBattery";
-import { Variable, bind } from "astal";
+import { Variable, bind, Binding } from "astal";
 import config from "../../utils/config";
-import { getFocusedShellMode } from "../../utils/mode-switcher";
+import { getFocusedShellMode, getMonitorShellMode, shellMode } from "./utils";
 import { enableClickthrough } from "../../utils/utils";
-import { BarProps } from "./types";
+import { BarProps, BarMode } from "./types";
 import BarModeContent from "./modes";
 
-const time = Variable("").poll(1000, "date");
-
 export default function Bar(barProps: BarProps) {
-  const { gdkmonitor, monitor, ...props } = barProps;
-  const battery = Battery.get_default();
-  const batteryPercentage = bind(battery, "percentage").as((v) => v);
+  const { gdkmonitor, monitor, index, ...props } = barProps;
+  // const battery = Battery.get_default();
+  // const batteryPercentage = bind(battery, "percentage").as((v) => v);
+  var barShellMode = Variable<BarMode>(BarMode.Normal);
 
-  // todo: fix this to be reactive probably isnt going to work right
-  const shellMode = Variable(getFocusedShellMode());
+  // const currShellMode = getMonitorShellMode(monitor);
+  print("Bar created");
+  // bind(shellMode)
+  // print("Current shell mode:", currShellMode);
+
+  // const mode = () =>
+  //   bind(shellMode).as((v) => {
+  //     print(`COMPOENENT: Shell mode for monitor ${index}:`, mode);
+  //     return v.modes[index as number];
+  //   });
+
+  // const barMode = initShellMode[initMonitor];
+
+  shellMode.subscribe((shellMode) => {
+    print("COMPONENT: Shell mode changed:", shellMode.modes[index as number]);
+    barShellMode.set(shellMode.modes[index as number]);
+  });
 
   return (
     <window
@@ -36,7 +50,7 @@ export default function Bar(barProps: BarProps) {
         transitionType={Gtk.StackTransitionType.SLIDE_UP_DOWN}
         transitionDuration={config.animations.durationLarge}
       >
-        <BarModeContent mode={shellMode.get()} />
+        <BarModeContent mode={bind(barShellMode)} />
       </stack>
     </window>
   );

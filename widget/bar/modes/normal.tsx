@@ -30,6 +30,7 @@ export default function NormalBarMode(barModeProps: NormalBarContentProps) {
             shown={config.workspaces.shown}
             initilized={false}
           />
+          Normal
           <SideModule>
             <System />
           </SideModule>

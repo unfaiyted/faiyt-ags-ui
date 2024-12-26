@@ -27,13 +27,13 @@ export default function FocusBarMode(focusBarModeProps: FocusBarContentProps) {
                   `}
                 >
                   <Workspaces
-                    mode={config.bar.default}
+                    mode={props.mode}
                     initilized={false}
                     shown={config.workspaces.shown}
                   />
+                  focus mode
                 </box>
               </box>
-              focus mode
             </eventbox>
           </box>
         </box>

@@ -1,7 +1,7 @@
 import { Widget } from "astal/gtk3";
 import config from "../../../../../utils/config";
 import Hypr from "gi://AstalHyprland";
-import { Variable } from "astal";
+import { Variable, bind } from "astal";
 import { BarMode } from "../../../types";
 import NormalContent from "./normal";
 import FocusContent from "./focus";
@@ -20,6 +20,7 @@ export default function WorkspacesModeContent(
   const initilized = Variable(false);
   const workspaceMask = Variable(0);
   const workspaceGroup = Variable(0);
+  const mode = Variable(props.mode.get());
 
   const updateMask = (self: Widget.DrawingArea) => {
     const offset =
@@ -60,42 +61,53 @@ export default function WorkspacesModeContent(
     }
   });
 
-  switch (props.mode) {
-    case BarMode.Normal:
-      return (
-        <NormalContent
-          {...props}
-          shown={shown}
-          initilized={init}
-          toggleMask={toggleMask}
-          workspace={workspace}
-          updateMask={updateMask}
-          workspaceGroup={workspaceGroup}
-          workspaceMask={workspaceMask}
-        />
-      );
-    case BarMode.Focus:
-      return (
-        <FocusContent
-          {...props}
-          shown={shown}
-          initilized={init}
-          toggleMask={toggleMask}
-          workspace={workspace}
-          updateMask={updateMask}
-          workspaceGroup={workspaceGroup}
-          workspaceMask={workspaceMask}
-        />
-      );
-    case BarMode.Nothing:
-    default:
-      return (
-        <NothingContent
-          {...props}
-          toggleMask={toggleMask}
-          workspace={workspace}
-          updateMask={updateMask}
-        />
-      );
-  }
+  const getWorkspacebyMode = () => {
+    switch (props.mode.get()) {
+      case BarMode.Normal:
+        return (
+          <NormalContent
+            {...props}
+            shown={shown}
+            initilized={init}
+            toggleMask={toggleMask}
+            workspace={workspace}
+            updateMask={updateMask}
+            workspaceGroup={workspaceGroup}
+            workspaceMask={workspaceMask}
+          />
+        );
+      case BarMode.Focus:
+        return (
+          <FocusContent
+            {...props}
+            shown={shown}
+            initilized={init}
+            toggleMask={toggleMask}
+            workspace={workspace}
+            updateMask={updateMask}
+            workspaceGroup={workspaceGroup}
+            workspaceMask={workspaceMask}
+          />
+        );
+      case BarMode.Nothing:
+      default:
+        return (
+          <NothingContent
+            {...props}
+            toggleMask={toggleMask}
+            workspace={workspace}
+            updateMask={updateMask}
+          />
+        );
+    }
+  };
+
+  const displayWorkspace = Variable(getWorkspacebyMode());
+
+  props.mode.subscribe((mode) => {
+    print("Workspaces COMPONENT: Mode changed:", mode);
+    displayWorkspace.set(getWorkspacebyMode());
+  });
+
+  return <box>{bind(displayWorkspace).as((v) => v)}</box>;
 }

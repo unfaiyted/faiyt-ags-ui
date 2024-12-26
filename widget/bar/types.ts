@@ -1,4 +1,5 @@
 import { Widget, Gdk, Astal } from "astal/gtk3";
+import { Binding } from "astal";
 
 export enum ClickButtonPressed {
   LEFT = 1,
@@ -32,7 +33,7 @@ export interface BarProps extends Widget.WindowProps {
 }
 
 export interface BaseBarContentProps extends Widget.EventBoxProps {
-  mode: BarMode;
+  mode: Binding<BarMode>;
 }
 export interface NormalBarContentProps extends BaseBarContentProps {}
 export interface FocusBarContentProps extends BaseBarContentProps {}
