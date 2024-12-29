@@ -6,20 +6,22 @@ import SideModule from "../modules/side-module";
 import System from "../modules/system";
 import Music from "../modules/music";
 import Workspaces from "../modules/workspaces";
+import Clock from "../modules/clock";
+import Tray from "../modules/tray";
+import LeftModule from "../modules/left-module";
+import RightModule from "../modules/right-module";
+import Battery from "../modules/battery";
 
 export default function NormalBarMode(barModeProps: NormalBarContentProps) {
   const { setup, child, ...props } = barModeProps;
 
   return (
     <centerbox
-      setup={(self) => {
-        const styleContext = self.get_style_context();
-        const minHeight = styleContext.get_property(
-          "min-height",
-          Gtk.StateFlags.NORMAL,
-        );
-      }}
-      startWidget={<WindowTitle />}
+      startWidget={
+        <LeftModule>
+          <WindowTitle />
+        </LeftModule>
+      }
       centerWidget={
         <box className="spacing-h-4">
           <SideModule>
@@ -30,13 +32,23 @@ export default function NormalBarMode(barModeProps: NormalBarContentProps) {
             shown={config.workspaces.shown}
             initilized={false}
           />
-          Normal
           <SideModule>
-            <System />
+            <System>
+              <Clock />
+              <Battery />
+              {/* <Weather /> */}
+              {/* <Utilities> */}
+              {/*   <UtilButton /> */}
+              {/* </Utilities> */}
+            </System>
           </SideModule>
         </box>
       }
-      // endWidget={<Indicators monitors={monitor} />}
+      endWidget={
+        <RightModule>
+          <Tray />
+        </RightModule>
+      }
       className="bar-bg"
     ></centerbox>
   );

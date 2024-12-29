@@ -1,0 +1,68 @@
+@use "../_mixins.scss" as mixins;
+
+.ph {
+  // Phosphor Icons
+  @include mixins.icon-phosphor;
+  font-family: "Phosphor";
+  font-weight: normal;
+  font-style: normal;
+}
+
+.ph-bold {
+  // Phosphor Icons
+  @include mixins.icon-phosphor;
+  font-family: "Phosphor-Bold";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ph-duotone {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "Phosphor-Duotone";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ph-fill {
+  font-family: "Phosphor-Fill";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  font-feature-settings: "liga";
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ph-thin {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "Phosphor-Thin";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  font-feature-settings: "liga";
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

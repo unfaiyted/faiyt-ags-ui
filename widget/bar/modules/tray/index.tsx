@@ -3,46 +3,39 @@ import { Widget } from "astal/gtk3";
 import SystemTray from "gi://AstalTray";
 import { Variable } from "astal";
 import TrayItem from "./item";
-
-export interface TrayModuleProps extends Widget.BoxProps {}
+import { TrayModuleProps } from "./types";
+import config from "../../../../utils/config";
+import { bind } from "astal";
 
 export default function Tray(trayModuleProps: TrayModuleProps) {
   const { setup, child, ...props } = trayModuleProps;
 
-  const tray = Variable(SystemTray.get_default());
+  const tray = SystemTray.get_default();
 
-  tray.get().connect("item-added", () => {
-    tray.set(SystemTray.get_default());
+  const trayItems = Variable<SystemTray.TrayItem[]>(tray.get_items());
+
+  tray.connect("item-added", () => {
+    print("Tray item added.");
+    trayItems.set(tray.get_items());
   });
-  tray.get().connect("item-removed", () => {
-    tray.set(SystemTray.get_default());
+  tray.connect("item-removed", () => {
+    print("Tray item removed.");
+    trayItems.set(tray.get_items());
   });
-
-  const mapTrayItem = (value: SystemTray.TrayItem) => {
-    return <TrayItem value={value} key={value.get_id()} />;
-  };
-
-  const trayContent = (
-    <box
-      className="margin-right-5 spacing-h-15"
-      setup={(self) => {
-        self.hook(tray, () => {
-          self.children = tray.get().items.map(mapTrayItem);
-        });
-      }}
-    ></box>
-  );
 
   return (
-    <box
-      {...props}
-      className="bar-sidemodule"
-      setup={(self) => {
-        setup?.(self);
-      }}
-    >
-      {child}
-      SysModule
+    <box {...props}>
+      <revealer
+        reveal-child={true}
+        transition-type={Gtk.RevealerTransitionType.SLIDE_DOWN}
+        transition-duration={config.animations.durationLarge}
+      >
+        <box className="margin-right-5 spacing-h-15">
+          {bind(trayItems).as((v: SystemTray.TrayItem[]) =>
+            v.map((v) => <TrayItem item={v} />),
+          )}
+        </box>
+      </revealer>
     </box>
   );
 }

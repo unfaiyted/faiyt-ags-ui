@@ -13,14 +13,10 @@ export default function WorkspacesModeContent(
 ) {
   const { setup, shown, initilized: init, ...props } = baseWorkspacesProps;
 
-  // const activeBarMode = Variable(config.bar.default);
-
   const hypr = Hypr.get_default();
 
-  const initilized = Variable(false);
   const workspaceMask = Variable(0);
   const workspaceGroup = Variable(0);
-  const mode = Variable(props.mode.get());
 
   const updateMask = (self: Widget.DrawingArea) => {
     const offset =
@@ -31,7 +27,6 @@ export default function WorkspacesModeContent(
     for (let i = 0; i < workspaces.length; i++) {
       const ws = workspaces[i];
       if (ws.id <= offset || ws.id > offset + shown) continue; // Out of range, ignore
-      // todo: this is iffy to me
       if (workspaces[i].get_clients().length > 0) mask |= 1 << (ws.id - offset);
     }
     // console.log('Mask:', workspaceMask.toString(2));
@@ -55,7 +50,7 @@ export default function WorkspacesModeContent(
   const workspace = Variable(hypr.get_focused_workspace());
 
   hypr.connect("event", (source, event, args) => {
-    print("Hyprland event:", event);
+    // print("Hyprland event:", event);
     if (event === "workspace" || event === "workspacev2") {
       workspace.set(hypr.get_focused_workspace());
     }
@@ -91,23 +86,25 @@ export default function WorkspacesModeContent(
         );
       case BarMode.Nothing:
       default:
-        return (
-          <NothingContent
-            {...props}
-            toggleMask={toggleMask}
-            workspace={workspace}
-            updateMask={updateMask}
-          />
-        );
+        return <NothingContent {...props} shown={shown} initilized={init} />;
     }
   };
 
   const displayWorkspace = Variable(getWorkspacebyMode());
 
   props.mode.subscribe((mode) => {
-    print("Workspaces COMPONENT: Mode changed:", mode);
     displayWorkspace.set(getWorkspacebyMode());
   });
 
-  return <box>{bind(displayWorkspace).as((v) => v)}</box>;
+  return (
+    <box homogeneous={true}>
+      <box
+        css={`
+          min-width: 2px;
+        `}
+      >
+        {bind(displayWorkspace).as((v) => v)}
+      </box>
+    </box>
+  );
 }

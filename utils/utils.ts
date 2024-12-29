@@ -1,5 +1,6 @@
 import Cairo from "gi://cairo";
 import { Astal, Gdk } from "astal/gtk3";
+import GLib from "gi://GLib";
 
 export const dummyRegion = new Cairo.Region();
 
@@ -16,3 +17,10 @@ export const getScrollDirection = (
     return Gdk.ScrollDirection.DOWN;
   }
 };
+
+const isIcon = (icon: string) => !!Astal.Icon.lookup_icon(icon);
+
+const fileExists = (path: string) => GLib.file_test(path, GLib.FileTest.EXISTS);
+
+const time = (time: number, format = "%H:%M") =>
+  GLib.DateTime.new_from_unix_local(time).format(format)!;

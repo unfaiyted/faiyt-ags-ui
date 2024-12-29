@@ -1,11 +1,5 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk3";
-import { Widget } from "astal/gtk3";
-import config from "../../../utils/config";
-import { getScrollDirection } from "../../../utils/utils";
-import Hypr from "gi://AstalHyprland";
 import { Variable } from "astal";
-import { handleHyprResponse } from "../../../utils/handlers";
-import { BaseBarContentProps, BarMode, ClickButtonPressed } from "../types";
+import { BaseBarContentProps, BarMode } from "../types";
 import NormalBarContent from "./normal";
 import FocusBarContent from "./focus";
 import NothingBarContent from "./nothing";
@@ -33,3 +27,5 @@ export default function BarModeContent(baseBarProps: BaseBarContentProps) {
 
   return <box>{bind(barContent).as((v) => v)}</box>;
 }
+
+export { BarModeContent };

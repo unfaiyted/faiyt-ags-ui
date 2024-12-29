@@ -13,7 +13,7 @@ export default function WindowTitle(windowTitleProps: WindowTitleProps) {
   const workspace = Variable(hypr.get_focused_workspace());
 
   hypr.connect("event", (source, event, args) => {
-    print("Hyprland event:", event);
+    // print("Hyprland event:", event);
     if (event === "activewindow" || event === "activewindowv2") {
       client.set(hypr.get_focused_client());
     } else if (event === "workspace" || event === "workspacev2") {

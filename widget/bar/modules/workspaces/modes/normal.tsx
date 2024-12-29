@@ -5,9 +5,11 @@ import { Widget } from "astal/gtk3";
 import { getFontWeightName } from "../../../../../utils/font";
 import PangoCairo from "gi://PangoCairo";
 import Pango from "gi://Pango";
-import Cairo from "gi://cairo";
+// import Cairo from "gi://cairo";
+import cairo from "cairo";
 import config from "../../../../../utils/config";
 import { mix } from "../../../../../utils/color";
+import { RgbaColor } from "../../../types";
 
 const dummyWs = new Widget.Box({ className: "bar-ws" }); // Not shown. Only for getting size props
 const dummyActiveWs = new Widget.Box({ className: "bar-ws bar-ws-active" }); // Not shown. Only for getting size props
@@ -39,8 +41,8 @@ export default function NormalModeWorkspaces(
       //   (self) => self.attribute.updateMask(self),
       //   "notify::workspaces",
       // )
-      .connect("draw", (area: Gtk.DrawingArea, cr) => {
-        print("Drawing workspaces");
+      .connect("draw", (area: Gtk.DrawingArea, cr: cairo.Context) => {
+        // print("Drawing workspaces");
         const offset =
           Math.floor((workspace.get().id - 1) / shown) *
           config.workspaces.shown;
@@ -86,30 +88,30 @@ export default function NormalModeWorkspaces(
         const wsfg = workspaceStyleContext.get_property(
           "color",
           Gtk.StateFlags.NORMAL,
-        );
+        ) as RgbaColor;
 
         const occupiedWorkspaceStyleContext =
           dummyOccupiedWs.get_style_context();
         const occupiedbg = occupiedWorkspaceStyleContext.get_property(
           "background-color",
           Gtk.StateFlags.NORMAL,
-        ) as { red: number; green: number; blue: number; alpha: number };
+        ) as RgbaColor;
 
         const occupiedfg = occupiedWorkspaceStyleContext.get_property(
           "color",
           Gtk.StateFlags.NORMAL,
-        ) as { red: number; green: number; blue: number; alpha: number };
+        ) as RgbaColor;
 
         const activeWorkspaceStyleContext = dummyActiveWs.get_style_context();
         const activebg = activeWorkspaceStyleContext.get_property(
           "background-color",
           Gtk.StateFlags.NORMAL,
-        ) as { red: number; green: number; blue: number; alpha: number };
+        ) as RgbaColor;
 
         const activefg = activeWorkspaceStyleContext.get_property(
           "color",
           Gtk.StateFlags.NORMAL,
-        ) as { red: number; green: number; blue: number; alpha: number };
+        ) as RgbaColor;
 
         area.set_size_request(workspaceDiameter * shown, -1);
         const widgetStyleContext = area.get_style_context();
@@ -130,7 +132,7 @@ export default function NormalModeWorkspaces(
           `${workspaceFontFamily[0]} ${getFontWeightName(workspaceFontWeight)} ${workspaceFontSize}`,
         );
         layout.set_font_description(fontDesc);
-        cr.setAntialias(Cairo.Antialias.BEST);
+        cr.setAntialias(cairo.Antialias.BEST);
         // Get kinda min radius for number indicators
         layout.set_text("0".repeat(shown.toString().length), -1);
         const [layoutWidth, layoutHeight] = layout.get_pixel_size();
@@ -279,18 +281,10 @@ export default function NormalModeWorkspaces(
   };
 
   return (
-    <box homogeneous={true}>
-      <box
-        css={`
-          min-width: 2px;
-        `}
-      >
-        <drawingarea
-          {...props}
-          className="bar-ws-container"
-          setup={contentSetup}
-        ></drawingarea>
-      </box>
-    </box>
+    <drawingarea
+      {...props}
+      className="bar-ws-container"
+      setup={contentSetup}
+    ></drawingarea>
   );
 }

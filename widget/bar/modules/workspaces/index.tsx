@@ -3,8 +3,7 @@ export * from "./modes/normal";
 export * from "./modes/focus";
 
 import { BaseWorkspacesProps } from "./types";
-import WorkspaceModeContent from "./modes";
-import { BarMode } from "../../types";
+import WorkspaceContent from "./modes";
 import { handleHyprResponse } from "../../../../utils/handlers";
 import config from "../../../../utils/config";
 import { Variable } from "astal";
@@ -17,7 +16,6 @@ export default function Workspaces(workspacesProps: BaseWorkspacesProps) {
   const { setup, mode, ...props } = workspacesProps;
 
   const hypr = Hypr.get_default();
-  const activeBarMode = Variable(config.bar.default);
 
   const handleScroll = (self: Widget.EventBox, event: Astal.ScrollEvent) => {
     const scrollDirection = getScrollDirection(event);
@@ -104,7 +102,7 @@ export default function Workspaces(workspacesProps: BaseWorkspacesProps) {
               min-width: 2px;
             `}
           >
-            <WorkspaceModeContent
+            <WorkspaceContent
               mode={mode}
               shown={config.workspaces.shown}
               initilized={false}

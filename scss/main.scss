@@ -1,10 +1,13 @@
 // Modern SCSS using @use
+// @use "phosphor-css/css/index.css";
+// @use "../node_modules/@phosphor-icons/web/src/regular/style.css";
 @use "sass:math";
 @use "fallback/material" as material;
 @use "colors" as colors;
 @use "mixins" as mixins;
 @use "classes" as classes;
 @use "./common" as common;
+@use "./icons/phosphor";
 
 // Components
 @use "./bar";
@@ -18,6 +21,10 @@
 // @use "./session";
 // @use "./notifications";
 // @use "./music";
+//
+// @import "phosphor-icons/css/index.css";
+// @use "../node_modules/@phosphor-icons/web/src/regular/style.css";
+// @use "../node_modules/@phosphor-icons/web/src/thin/style.css";
 
 // Reset styles
 *:not(popover) {

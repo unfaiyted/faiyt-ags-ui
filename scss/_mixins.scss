@@ -55,6 +55,12 @@ $rounding_large: 1.705rem;
     "Material Symbols Outlined", "Material Symbols Sharp";
 }
 
+@mixin icon-phosphor {
+  // Phosphor Icons
+  font-family: "Phosphor", "Phosphor-Bold", "Phosphor-Duotone",
+    "Phoshphor-Outline", "Phosphor-Fill", "Phosphor-Thin";
+}
+
 @mixin icon-nerd {
   // Nerd Fonts
   font-family: "SpaceMono NF", "SpaceMono Nerd Font", "JetBrains Mono NF",

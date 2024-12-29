@@ -14,6 +14,11 @@
   "author": "Dane L Miller",
   "license": "ISC",
   "dependencies": {
-    "material-colors": "^1.2.6"
+    "@girs/cairo-1.0": "^1.0.0-4.0.0-beta.19",
+    "@phosphor-icons/core": "^2.1.1",
+    "@phosphor-icons/web": "^2.1.1",
+    "lucide-static": "^0.469.0",
+    "material-colors": "^1.2.6",
+    "phosphor-css": "^3.1.0"
   }
 }

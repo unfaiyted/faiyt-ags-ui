@@ -35,6 +35,8 @@ export interface FocusModeWorkspacesProps extends BaseWorkspacesProps {
   ) => void;
 }
 
+export interface NothingWorkspaceContentsProps extends BaseWorkspacesProps {}
+
 export interface NormalWorkspacesContentsProps extends WorkspaceContentsProps {
   workspace: Hypr.Workspace;
   shown: number;
