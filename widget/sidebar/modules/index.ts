@@ -7,50 +7,58 @@ import Wifi from "./wifi";
 import Configuration from "./configuration";
 import Notifications from "./notifications";
 import Tools from "./tools";
-
+import { PhosphorIcons } from "../../utils/icons/types";
 import { TabContent } from "../../utils/containers/tabs";
 
-export const sidebarModules: Record<string, TabContent> = {
-  apis: {
-    name: "AIs",
+export enum SidebarModule {
+  ais = "ais",
+  tools = "tools",
+  bluetooth = "bluetooth",
+  wifi = "wifi",
+  config = "config",
+}
+
+export const SIDEBAR_MODULES: Record<string, TabContent> = {
+  [SidebarModule.ais]: {
+    name: SidebarModule.ais,
     content: AITab,
-    icon: "api",
+    icon: PhosphorIcons["open-ai-logo"],
   },
-  tools: {
-    name: "tools",
+  [SidebarModule.tools]: {
+    name: SidebarModule.tools,
     content: Tools,
-    icon: "home_repair_service",
+    icon: PhosphorIcons["toolbox"],
   },
-  bluetooth: {
-    name: "bluetooth",
+  [SidebarModule.bluetooth]: {
+    name: SidebarModule.bluetooth,
     content: Bluetooth,
-    icon: "bluetooth",
+    icon: PhosphorIcons["bluetooth"],
   },
-  wifi: {
-    name: "wifi",
+  [SidebarModule.wifi]: {
+    name: SidebarModule.wifi,
     content: Wifi,
-    icon: "wifi",
+    icon: PhosphorIcons["wifi-medium"],
   },
-  config: {
-    name: "config",
+  [SidebarModule.config]: {
+    name: SidebarModule.config,
     content: Configuration,
-    icon: "settings",
+    icon: PhosphorIcons["gear"],
   },
 };
 
 export const getSidebarTabs = () => {
   const tabs: TabContent[] = [];
-  for (const key in sidebarModules) {
-    tabs.push(sidebarModules[key]);
+  for (const key in SIDEBAR_MODULES) {
+    tabs.push(SIDEBAR_MODULES[key]);
   }
   return tabs;
 };
 
 export const getSidebarTabByName = (name: string) => {
   let tab: TabContent | null = null;
-  for (const key in sidebarModules) {
-    if (sidebarModules[key].name === name) {
-      tab = sidebarModules[key];
+  for (const key in SIDEBAR_MODULES) {
+    if (SIDEBAR_MODULES[key].name === name) {
+      tab = SIDEBAR_MODULES[key];
     }
   }
 
@@ -61,5 +69,5 @@ export const getSidebarTabByName = (name: string) => {
 };
 
 export const getSidebarTabByKey = (key: string) => {
-  return sidebarModules[key];
+  return SIDEBAR_MODULES[key];
 };

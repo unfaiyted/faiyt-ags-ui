@@ -1,5 +1,4 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
-import { Widget } from "astal/gtk3";
 import SystemTray from "gi://AstalTray";
 import { Variable } from "astal";
 import TrayItem from "./item";
@@ -18,6 +17,7 @@ export default function Tray(trayModuleProps: TrayModuleProps) {
     print("Tray item added.");
     trayItems.set(tray.get_items());
   });
+
   tray.connect("item-removed", () => {
     print("Tray item removed.");
     trayItems.set(tray.get_items());

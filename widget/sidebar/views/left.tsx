@@ -25,24 +25,26 @@ export default function LeftSideBar(sideBarProps: LeftSideBarProps) {
 
   print("Sidebar tabs:", sidebarTabs);
 
+  sidebarTabs.map((tab) => print("Tab name:", tab.name));
+
   return (
     <SideBar
       {...props}
       screenSide={ScreenSide.LEFT}
-      className="sidebar-left sidebar-pinned spacing-v-10"
+      className="sidebar-left spacing-v-10"
       css="background-color: red;"
       application={App}
     >
       <box vexpand={true} css="min-width: 2px;">
         {/* Toggles? */}
         <Tabs tabs={sidebarTabs} active={0} />
-        <PhosphorIcon icon={PhosphorIcons.acorn} size={32} />
-        <PhosphorIcon icon={PhosphorIcons.airplane} size={32} />
-        <PhosphorIcon
-          icon={PhosphorIcons.airplane}
-          weight={PhosphorWeight.BOLD}
-          size={32}
-        />
+        {/* <PhosphorIcon icon={PhosphorIcons.acorn} size={32} /> */}
+        {/* <PhosphorIcon icon={PhosphorIcons.airplane} size={32} /> */}
+        {/* <PhosphorIcon */}
+        {/*   icon={PhosphorIcons.airplane} */}
+        {/*   weight={PhosphorWeight.BOLD} */}
+        {/*   size={32} */}
+        {/* /> */}
         {/* <icon */}
         {/*   file="./assets/icons/ai-zukijourney.png" */}
         {/*   css={``} */}

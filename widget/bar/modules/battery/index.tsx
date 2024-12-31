@@ -9,12 +9,11 @@ export default function BatteryModule(batteryModuleProps: BatteryModuleProps) {
   return (
     <box
       {...props}
-      className="bar-sidemodule"
       setup={(self) => {
         setup?.(self);
       }}
     >
-      {child}
+      BATTERY!
     </box>
   );
 }

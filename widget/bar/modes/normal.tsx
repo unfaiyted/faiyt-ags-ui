@@ -33,14 +33,12 @@ export default function NormalBarMode(barModeProps: NormalBarContentProps) {
             initilized={false}
           />
           <SideModule>
-            <System>
-              <Clock />
-              <Battery />
-              {/* <Weather /> */}
-              {/* <Utilities> */}
-              {/*   <UtilButton /> */}
-              {/* </Utilities> */}
-            </System>
+            <Clock />
+            <Battery />
+            {/* <Weather /> */}
+            {/* <Utilities> */}
+            {/*   <UtilButton /> */}
+            {/* </Utilities> */}
           </SideModule>
         </box>
       }

@@ -2,13 +2,13 @@ import { PhosphorIcons, PhosphorWeight, PhosphorIconProps } from "./types";
 
 export default function PhosphorIcon(phosphorIconProps: PhosphorIconProps) {
   const { setup, icon, ...props } = phosphorIconProps;
-  print("PhosphorIcon:", icon);
+  // print("PhosphorIcon:", icon);
 
   const weight = props.weight || PhosphorWeight.REGULAR;
 
-  print("PhosphorIcon weight:", weight);
+  // print("PhosphorIcon weight:", weight);
   const className = `${props.className} ph`;
-  print("PhosphorIcon className:", className);
+  // print("PhosphorIcon className:", className);
 
   const iconValue =
     typeof icon === "string" && icon in PhosphorIcons

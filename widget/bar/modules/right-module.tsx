@@ -1,12 +1,12 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
 
-export interface LeftSideModuleProps extends Widget.EventBoxProps {}
+export interface RightSideModuleProps extends Widget.EventBoxProps {}
 
 export default function RightSideModule(
-  leftSideModuleProps: LeftSideModuleProps,
+  rightSideModuleProps: RightSideModuleProps,
 ) {
-  const { setup, child, ...props } = leftSideModuleProps;
+  const { setup, child, ...props } = rightSideModuleProps;
 
   return (
     <eventbox>

@@ -9,10 +9,11 @@ export interface SideModuleProps extends Widget.EventBoxProps {
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
   onMiddleClick?: () => void;
+  children?: Widget.BoxProps;
 }
 
 export default function SideModule(sideModuleProps: SideModuleProps) {
-  const { setup, child, ...props } = sideModuleProps;
+  const { setup, child, children, ...props } = sideModuleProps;
 
   const handleScroll = (self: Widget.EventBox, event: Astal.ScrollEvent) => {
     const scrollDirection = getScrollDirection(event);
@@ -41,16 +42,17 @@ export default function SideModule(sideModuleProps: SideModuleProps) {
 
   return (
     <eventbox onScroll={handleScroll} onClick={handleClick}>
-      <box homogeneous={false}>
-        <box className="bar-corner-spacing" />
-        <overlay>
-          <box hexpand={true} />
-          <box className="bar-sidemodule" hexpand={true}>
-            <box className="bar-space-button" vertical={true}>
-              {child}
-            </box>
-          </box>
-        </overlay>
+      {/* <box homogeneous={false}> */}
+      <box className="bar-sidemodule">
+        {/* <box className="bar-corner-spacing" /> */}
+        {/* <overlay> */}
+        {/* <box hexpand={true} /> */}
+        {/* <box className="bar-sidemodule" hexpand={true}> */}
+        {/* <box className="bar-space-button" vertical={true}> */}
+        {children || child}
+        {/* </box> */}
+        {/* </box> */}
+        {/* </overlay> */}
       </box>
     </eventbox>
   );

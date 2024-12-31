@@ -7,6 +7,12 @@ import iconStyles from "./node_modules/@phosphor-icons/web/src/regular/style.css
 import Bar from "./widget/bar";
 import { BarProps, BarMode } from "./widget/bar/types";
 import SideLeft from "./widget/sidebar/views/left";
+import SideRight from "./widget/sidebar/views/right";
+import cliRequestHandler from "./handlers/cli";
+import {
+  BarCornerTopLeft,
+  BarCornerTopRight,
+} from "./widget/bar/utils/bar-corners";
 
 // Init shell modes for all active monitors
 initialMonitorShellModes();
@@ -20,36 +26,18 @@ App.start({
     );
 
     SideLeft({ gdkmonitor: App.get_monitors()[0] });
+    SideRight({ gdkmonitor: App.get_monitors()[0] });
+
+    BarCornerTopLeft({ gdkmonitor: App.get_monitors()[0], index: 0 });
+    BarCornerTopRight({ gdkmonitor: App.get_monitors()[0], index: 0 });
+    // App.get_monitors().map((gdkmonitor, index, array) =>
+    //   // BarCornerTopLeft({ gdkmonitor: gdkmonitor, index }),
+    // );
+    // App.get_monitors().map((gdkmonitor, index, array) =>
+    //   BarCornerTopRight({ gdkmonitor: gdkmonitor, index }),
+    // );
   },
   requestHandler(request: string, res: (response: any) => void) {
-    print("Request Received:", request);
-    // if (request == "toggle-bar-mode") {
-    //   cycleMode();
-    //   // call function to toggle bar mode
-    //   return res("changing bar mode!");
-    // }
-    // res("unknown request");
-    //
-    switch (request) {
-      case "toggle-bar-mode":
-        cycleMode();
-        // call function to toggle bar mode
-        return res("changing bar mode!");
-      case "toggle-sidebar-left":
-        // print("Sidebar left");
-        App?.get_window("sidebar-left");
-        const windows = App.get_windows();
-
-        windows.map((window) => {
-          print("Window name:", window.name);
-          if (window.name === "sidebar-left") {
-            window.visible = !window.visible;
-          }
-        });
-
-        return res("changing sidebar left!");
-      default:
-        return res("unknown request");
-    }
+    cliRequestHandler(request, res);
   },
 });

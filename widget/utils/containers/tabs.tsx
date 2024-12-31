@@ -1,11 +1,13 @@
 import { Widget, Gtk, Gdk, Astal } from "astal/gtk3";
 import { Variable, Binding, bind } from "astal";
 import { getScrollDirection } from "../../../utils/utils";
+import PhosphorIcon from "../../utils/icons/phosphor";
+import { PhosphorIcons } from "../../utils/icons/types";
 
 export interface TabContent {
   name: string;
   content: (props: Widget.BoxProps) => Gtk.Widget;
-  icon: string;
+  icon: PhosphorIcons;
 }
 
 export interface TabContainerProps extends Widget.BoxProps {
@@ -16,7 +18,9 @@ export interface TabContainerProps extends Widget.BoxProps {
 export interface TabHeaderProps extends Widget.BoxProps {}
 export interface TabHeaderItemProps extends Widget.BoxProps {
   tab: TabContent;
+  active: number | Binding<number>;
   index: number;
+  setActive: () => void;
 }
 
 export interface TabContentProps extends Widget.BoxProps {
@@ -30,16 +34,33 @@ export const TabContainer = (tabContainerProps: TabContainerProps) => {
   const active = Variable(props.active);
   const activeTab = Variable(props.tabs[props.active]);
 
-  // let lastActive = 0;
+  let lastActive = Variable(props.active);
   // const count = Math.min(icons.length, names.length);
 
   print("Tabs length:", props.tabs.length);
+
+  const handleHeaderClick = (index: number) => {
+    lastActive.set(active.get());
+    active.set(index);
+  };
+
+  active.subscribe((index) => {
+    print("Active tab:", index);
+
+    activeTab.set(props.tabs[index]);
+  });
 
   return (
     <box vertical className={`spacing-v-5 ${className}`}>
       <TabHeader {...props}>
         {props.tabs.map((tab, i) => (
-          <TabHeaderItem tab={tab} index={i} {...props} />
+          <TabHeaderItem
+            {...props}
+            tab={tab}
+            active={bind(active).as((v) => v)}
+            index={i}
+            setActive={() => active.set(i)}
+          />
         ))}
       </TabHeader>
       <TabContent {...props} tab={bind(activeTab).as((v) => v)} />
@@ -64,24 +85,50 @@ export const TabHeader = (tabHeaderProps: TabHeaderProps) => {
 
   return (
     <box homogeneous={true}>
-      <eventbox onScroll={handleScroll}>{children}</eventbox>
+      {/* <eventbox onScroll={handleScroll}>{children}</eventbox> */}
+      {children}
     </box>
   );
 };
 
 export const TabHeaderItem = (tabHeaderItemProps: TabHeaderItemProps) => {
-  const { setup, child, children, className, ...props } = tabHeaderItemProps;
+  const { child, children, className, index, active, ...props } =
+    tabHeaderItemProps;
 
-  print("TabHeaderItem:", props.tab.name);
+  const handleClick = (self: Widget.Button, event: Astal.ClickEvent) => {
+    print("TabHeaderItem clicked");
+    props.setActive();
+  };
+
+  const setup = (self: Widget.Button) => {
+    setup?.(self);
+
+    if (typeof active === "number") {
+      self.toggleClassName("tab-btn-active", active === index);
+    } else {
+      active.subscribe((currIndex) => {
+        print("Active tab:", currIndex);
+        if (index === currIndex) {
+          self.toggleClassName("tab-btn-active", true);
+        } else {
+          self.toggleClassName("tab-btn-active", false);
+        }
+      });
+    }
+  };
+
+  // print("TabHeaderItem:", props.tab.name);
   return (
-    <box className={`spacing-v-5 txt-small`}>
-      <button className="tab-btn">
-        <box>
-          <icon icon={props.tab.icon}></icon>
-          <label label={props.tab.name}></label>
-        </box>
-      </button>
-    </box>
+    <button className="tab-btn" onClick={handleClick}>
+      <box
+        halign={Gtk.Align.CENTER}
+        valign={Gtk.Align.CENTER}
+        className={`spacing-v-5 txt-small`}
+      >
+        <PhosphorIcon icon={props.tab.icon} size={24} />
+        <label label={props.tab.name}></label>
+      </box>
+    </button>
   );
 };
 

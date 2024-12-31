@@ -14,5 +14,28 @@ export default function LeftSideModule(
   props.onScrollDown = () => actions.brightness.decrease();
   props.onPrimaryClick = () => actions.music.toggle();
 
-  return <SideModule {...props}>{child}</SideModule>;
+  return (
+    <overlay>
+      <box hexpand={true}>
+        <SideModule {...props}>
+          <box className="bar-space-button">{child}</box>
+        </SideModule>
+      </box>
+    </overlay>
+  );
 }
+//
+// <eventbox onScroll={handleScroll} onClick={handleClick}>
+//   {/* <box homogeneous={false}> */}
+//   <box className="bar-sidemodule">
+//     ,{/* <box className="bar-corner-spacing" /> */}
+//     {/* <overlay> */}
+//     {/* <box hexpand={true} /> */}
+//     {/* <box className="bar-sidemodule" hexpand={true}> */}
+//     {/* <box className="bar-space-button" vertical={true}> */}
+//     {child}
+//     {/* </box> */}
+//     {/* </box> */}
+//     {/* </overlay> */}
+//   </box>
+// </eventbox>;
