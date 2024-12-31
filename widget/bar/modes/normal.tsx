@@ -4,7 +4,7 @@ import { NormalBarContentProps } from "../types";
 import WindowTitle from "../modules/window-title";
 import SideModule from "../modules/side-module";
 import System from "../modules/system";
-import Music from "../modules/music";
+import Music from "../modules/music/index";
 import Workspaces from "../modules/workspaces";
 import Clock from "../modules/clock";
 import Tray from "../modules/tray";
@@ -25,6 +25,7 @@ export default function NormalBarMode(barModeProps: NormalBarContentProps) {
       centerWidget={
         <box className="spacing-h-4">
           <SideModule>
+            <System />
             <Music />
           </SideModule>
           <Workspaces
