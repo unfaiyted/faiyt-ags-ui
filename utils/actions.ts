@@ -44,6 +44,12 @@ export const actions = {
     },
   },
   window: {
-    toggle: () => {},
+    toggle: (windowName: string) => {
+      execAsync([
+        "bash",
+        "-c",
+        `ags request "window toggle ${windowName}"`,
+      ]).catch(print);
+    },
   },
 };

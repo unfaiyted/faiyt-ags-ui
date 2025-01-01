@@ -2,6 +2,7 @@ import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
 import SideModule from "./side-module";
 import { actions } from "../../../utils/actions";
+import { UIWindows } from "../types";
 
 export interface LeftSideModuleProps extends Widget.EventBoxProps {}
 
@@ -12,16 +13,23 @@ export default function LeftSideModule(
 
   props.onScrollUp = () => actions.brightness.increase();
   props.onScrollDown = () => actions.brightness.decrease();
-  props.onPrimaryClick = () => actions.music.toggle();
+  props.onPrimaryClick = () => actions.window.toggle(UIWindows.SIDEBAR_LEFT);
 
   return (
-    <overlay>
-      <box hexpand={true}>
-        <SideModule {...props}>
-          <box className="bar-space-button">{child}</box>
-        </SideModule>
-      </box>
-    </overlay>
+    <box homogeneous={false}>
+      <box className="bar-corner-spacing" />
+      <overlay
+        overlay={
+          <box hexpand={true}>
+            <SideModule {...props}>
+              <box vertical className="bar-space-button">
+                {child}
+              </box>
+            </SideModule>
+          </box>
+        }
+      ></overlay>
+    </box>
   );
 }
 //

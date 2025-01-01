@@ -43,7 +43,7 @@ export default function SideModule(sideModuleProps: SideModuleProps) {
   return (
     <eventbox onScroll={handleScroll} onClick={handleClick}>
       {/* <box homogeneous={false}> */}
-      <box className="bar-sidemodule">
+      <box className="bar-sidemodule" hexpand={true}>
         {/* <box className="bar-corner-spacing" /> */}
         {/* <overlay> */}
         {/* <box hexpand={true} /> */}

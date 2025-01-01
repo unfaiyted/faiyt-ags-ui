@@ -5,7 +5,7 @@ import { TrackTitleProps } from "./types";
 
 export const TrackTitle = (props: TrackTitleProps) => {
   function trimTrackTitle(title: string) {
-    if (!title) return "";
+    if (!title || typeof title !== "string") return "";
     const cleanPatterns = [
       /【[^】]*】/, // Touhou n weeb stuff
       " [FREE DOWNLOAD]", // F-777

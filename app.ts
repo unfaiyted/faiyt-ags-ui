@@ -28,6 +28,7 @@ App.start({
     SideLeft({ gdkmonitor: App.get_monitors()[0] });
     SideRight({ gdkmonitor: App.get_monitors()[0] });
 
+    //Draws edges on corners
     BarCornerTopLeft({ gdkmonitor: App.get_monitors()[0], index: 0 });
     BarCornerTopRight({ gdkmonitor: App.get_monitors()[0], index: 0 });
     // App.get_monitors().map((gdkmonitor, index, array) =>

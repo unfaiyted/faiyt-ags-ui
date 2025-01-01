@@ -72,7 +72,7 @@ const BarResource = (props: BarResourceProps) => {
   );
 
   commandResult.subscribe((result) => {
-    print("Command result:", result);
+    // print("Command result:", result);
     resourceLabel.set(`${Math.round(Number(result))}%`);
     tooltipText.set(
       `${props.type.toUpperCase()} Usage: ${Math.round(Number(result))}%`,
@@ -129,31 +129,3 @@ export default function SystemResources(systemModuleProps: SystemModuleProps) {
     </BarGroup>
   );
 }
-
-//
-// BarGroup({
-//             child: Box({
-//                 children: [
-//                     BarResource(getString('RAM Usage'), 'memory', `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
-//                         'bar-ram-circprog', 'bar-ram-txt', 'bar-ram-icon'),
-//                     Revealer({
-//                         revealChild: true,
-//                         transition: 'slide_left',
-//                         transitionDuration: userOptions.animations.durationLarge,
-//                         child: Box({
-//                             className: 'spacing-h-10 margin-left-10',
-//                             children: [
-//                                 BarResource(getString('Swap Usage'), 'swap_horiz', `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
-//                                     'bar-swap-circprog', 'bar-swap-txt', 'bar-swap-icon'),
-//                                 BarResource(getString('CPU Usage'), 'settings_motion_mode', `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
-//                                     'bar-cpu-circprog', 'bar-cpu-txt', 'bar-cpu-icon'),
-//                             ]
-//                         }),
-//                         setup: (self) => self.hook(Mpris, label => {
-//                             const mpris = Mpris.getPlayer('');
-//                             self.revealChild = (!mpris);
-//                         }),
-//                     })
-//                 ],
-//             })
-//         });
