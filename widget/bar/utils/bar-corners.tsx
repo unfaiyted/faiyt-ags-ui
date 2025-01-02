@@ -21,7 +21,7 @@ export interface RoundedCornerProps extends Widget.DrawingAreaProps {
 }
 
 export const RoundedCorner = (props: RoundedCornerProps) => {
-  print("RoundedCorner props:", props.place);
+  // print("RoundedCorner props:", props.place);
   const setupDrawingArea = (self: Widget.DrawingArea) => {
     timeout(1, () => {
       const c = self
@@ -72,7 +72,7 @@ export const RoundedCorner = (props: RoundedCornerProps) => {
         cr.closePath();
         cr.setSourceRGBA(c.red, c.green, c.blue, c.alpha);
         cr.fill();
-        print("Drawing corner:", place);
+        // print("Drawing corner:", place);
         // cr.setLineWidth(borderWidth);
         // cr.setSourceRGBA(borderColor.red, borderColor.green, borderColor.blue, borderColor.alpha);
         // cr.stroke();
@@ -93,7 +93,7 @@ export const RoundedCorner = (props: RoundedCornerProps) => {
 };
 
 export const BarCornerTopLeft = (props: BarCornerTopProps) => {
-  print("BarCornerTopLeft props:", props.index);
+  // print("BarCornerTopLeft props:", props.index);
   return (
     <window
       gdkmonitor={props.gdkmonitor}

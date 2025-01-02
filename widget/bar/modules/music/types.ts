@@ -9,7 +9,7 @@ export interface TrackProgressProps extends Widget.CircularProgressProps {
 }
 
 export interface PlayingStateProps extends Widget.LabelProps {
-  status: Binding<Mpris.PlaybackStatus>;
+  status: Binding<string | Mpris.PlaybackStatus>;
 }
 export interface TrackTitleProps extends Widget.LabelProps {
   title: Binding<string>;

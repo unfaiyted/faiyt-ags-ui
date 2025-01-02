@@ -7,7 +7,7 @@ import { getScrollDirection } from "../../../utils/utils";
 import Hypr from "gi://AstalHyprland";
 import Gio from "gi://Gio";
 import { FocusBarContentProps } from "../types";
-import SideModule from "../modules/side-module";
+import SideModule from "../modules/side";
 import Battery from "gi://AstalBattery";
 export default function FocusBarMode(focusBarModeProps: FocusBarContentProps) {
   const { setup, child, ...props } = focusBarModeProps;

@@ -21,8 +21,13 @@ export default function Music(musicModuleProps: MusicModuleProps) {
 
   const player = Variable(mpris.get_players()[0]).poll(1000, () => {
     const currentPlayer = mpris.get_players()[0];
-    // print("Current player:", currentPlayer.identity);
-    if (currentPlayer.identity === lastPlayer.identity) return currentPlayer;
+
+    print("Current player:", currentPlayer.identity);
+
+    if (!currentPlayer) return lastPlayer;
+    if (lastPlayer && currentPlayer.identity === lastPlayer.identity)
+      return currentPlayer;
+
     print("Player changed:", currentPlayer.identity);
     updatePlayer(currentPlayer);
     return mpris.get_players()[0];
@@ -31,28 +36,27 @@ export default function Music(musicModuleProps: MusicModuleProps) {
   const playerCount = Variable(mpris.get_players().length);
 
   const value = Variable(0);
-  const title = Variable(player.get().title);
-  const artist = Variable(player.get().artist);
-  const album = Variable(player.get().album);
-  const playbackStatus = Variable(player.get().playbackStatus);
+  const title = Variable("");
+  const artist = Variable("");
+  const album = Variable("");
+  const playbackStatus = Variable<Mpris.PlaybackStatus | string>("unknown");
 
   if (mpris) {
     mpris.connect("player-closed", () => {
       print("Player closed");
-      updatePlayer();
+      updatePlayer(player.get());
     });
 
     mpris.connect("player-added", () => {
       print("Player added");
-      updatePlayer();
+      updatePlayer(player.get());
     });
   }
 
-  const updatePlayer = (currentPlayer?: Mpris.Player) => {
+  const updatePlayer = (currentPlayer: Mpris.Player) => {
     print(`Updating player`);
     player.set(currentPlayer || mpris.get_players()[0]);
     playerCount.set(mpris.get_players().length);
-    value.set(player.get().position / player.get().length);
 
     player.get().connect("notify", (p) => {
       value.set(p.position / p.length);
@@ -60,9 +64,6 @@ export default function Music(musicModuleProps: MusicModuleProps) {
       artist.set(p.artist);
       album.set(p.album);
       playbackStatus.set(p.playbackStatus);
-      // print("p:", p.playback_status);
-      // print("p position:", p.position);
-      // print("p length:", p.length);
     });
   };
 
@@ -81,9 +82,9 @@ export default function Music(musicModuleProps: MusicModuleProps) {
     }
   };
 
-  // if (!player) return <box></box>;
-
-  updatePlayer(player.get());
+  if (player.get()) {
+    updatePlayer(player.get());
+  }
   return (
     <eventbox onClick={handleClick}>
       <BarGroup>

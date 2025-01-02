@@ -39,44 +39,44 @@ const updateMonitorShellMode = (monitor: number, mode: BarMode) => {
 export const cycleMode = () => {
   const monitor = hypr.get_focused_monitor().id || 0;
 
-  print(`Monitor ${monitor} shell mode:`, shellMode.get().modes[monitor]);
+  // print(`Monitor ${monitor} shell mode:`, shellMode.get().modes[monitor]);
 
   if (shellMode.get().modes.length === 0) {
-    print("Initial monitor shell modes not set.");
+    // print("Initial monitor shell modes not set.");
     shellMode.set(initialMonitorShellModes());
   }
 
   if (shellMode.get().modes[monitor] === BarMode.Normal) {
-    print("Cycling to focus mode.");
+    // print("Cycling to focus mode.");
     updateMonitorShellMode(monitor, BarMode.Focus);
   } else if (shellMode.get().modes[monitor] === BarMode.Focus) {
-    print("Cycling to nothing mode.");
+    // print("Cycling to nothing mode.");
     updateMonitorShellMode(monitor, BarMode.Nothing);
   } else {
-    print("Cycling to normal mode, end.");
+    // print("Cycling to normal mode, end.");
     updateMonitorShellMode(monitor, BarMode.Normal);
   }
 };
 
 export const getFocusedShellMode = () => {
-  print("Getting focused shell mode.");
+  // print("Getting focused shell mode.");
   const monitor = hypr.get_focused_monitor().id || 0;
 
   // check if initial monitor modes are set
   if (shellMode.get().modes.length === 0) {
-    print("Initial monitor shell modes not set.");
+    // print("Initial monitor shell modes not set.");
     shellMode.set(initialMonitorShellModes());
   }
   const monitorShellMode = shellMode.get().modes[monitor];
-  print(`Shell mode for monitor ${monitor} is:`, monitorShellMode);
+  // print(`Shell mode for monitor ${monitor} is:`, monitorShellMode);
   return monitorShellMode;
 };
 
 export const getMonitorShellMode = (monitor: number) => {
-  print("Getting monitor shell mode.", monitor);
+  // print("Getting monitor shell mode.", monitor);
   // check if initial monitor modes are set
   if (shellMode.get().modes.length === 0) {
-    print("Initial monitor shell modes not set.");
+    // print("Initial monitor shell modes not set.");
     shellMode.set(initialMonitorShellModes());
   }
   return shellMode.get().modes[monitor];

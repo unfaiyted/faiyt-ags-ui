@@ -1,16 +1,18 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import config from "../../../utils/config";
 import { NormalBarContentProps } from "../types";
 import WindowTitle from "../modules/window-title";
-import SideModule from "../modules/side-module";
+import SideModule from "../modules/side";
 import System from "../modules/system";
 import Music from "../modules/music/index";
 import Workspaces from "../modules/workspaces";
 import Clock from "../modules/clock";
 import Tray from "../modules/tray";
-import LeftModule from "../modules/left-module";
-import RightModule from "../modules/right-module";
+import LeftModule from "../modules/left";
+import RightModule from "../modules/right";
 import Battery from "../modules/battery";
+import Utilities from "../modules/utilities";
+import Weather from "../modules/weather";
+import StatusIndicators from "../modules/indicators";
 
 export default function NormalBarMode(barModeProps: NormalBarContentProps) {
   const { setup, child, ...props } = barModeProps;
@@ -36,15 +38,14 @@ export default function NormalBarMode(barModeProps: NormalBarContentProps) {
           <SideModule>
             <Clock />
             <Battery />
-            {/* <Weather /> */}
-            {/* <Utilities> */}
-            {/*   <UtilButton /> */}
-            {/* </Utilities> */}
+            <Utilities />
+            <Weather />
           </SideModule>
         </box>
       }
       endWidget={
         <RightModule>
+          <StatusIndicators />
           <Tray />
         </RightModule>
       }

@@ -10,10 +10,10 @@ export default function Bar(barProps: BarProps) {
   const { gdkmonitor, monitor, index, ...props } = barProps;
   var barShellMode = Variable<BarMode>(BarMode.Normal);
 
-  print("Bar created");
+  // print("Bar created");
 
   shellMode.subscribe((shellMode) => {
-    print("COMPONENT: Shell mode changed:", shellMode.modes[index as number]);
+    // print("COMPONENT: Shell mode changed:", shellMode.modes[index as number]);
     barShellMode.set(shellMode.modes[index as number]);
   });
 

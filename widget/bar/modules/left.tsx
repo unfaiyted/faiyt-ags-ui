@@ -1,6 +1,6 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
-import SideModule from "./side-module";
+import SideModule from "./side";
 import { actions } from "../../../utils/actions";
 import { UIWindows } from "../types";
 

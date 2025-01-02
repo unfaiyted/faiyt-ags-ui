@@ -22,17 +22,17 @@ export default function Workspaces(workspacesProps: BaseWorkspacesProps) {
 
     // todo: add config option to reverse scroll direction
     if (scrollDirection === Gdk.ScrollDirection.UP) {
-      print("scroll up");
+      // print("scroll up");
       hypr.message_async(`dispatch workspace +1`, handleHyprResponse);
     } else if (scrollDirection === Gdk.ScrollDirection.DOWN) {
-      print("scroll down");
+      // print("scroll down");
       hypr.message_async(`dispatch workspace -1`, handleHyprResponse);
     }
   };
 
   const handleClick = (self: Widget.EventBox, event: Astal.ClickEvent) => {
     // 1 = left, 2 = middle, 3 = right
-    print("event.button: " + event.button);
+    // print("event.button: " + event.button);
 
     if (event.button === ClickButtonPressed.LEFT.valueOf()) {
     } else if (event.button === ClickButtonPressed.MIDDLE.valueOf()) {

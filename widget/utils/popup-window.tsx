@@ -26,7 +26,7 @@ export default ({
     }
   };
 
-  print("Popup window name:", name);
+  // print("Popup window name:", name);
 
   const boxSetup = (self: Widget.Box) => {
     // setup?.(self);
@@ -58,7 +58,7 @@ export default ({
     // print("Gdk.Key.Escape:", Gdk.KEY_Escape);
 
     if (event.get_keyval()[1] === Gdk.KEY_Escape) {
-      print("Closing popup-window, event.keycode[1]:", event.get_keycode()[1]);
+      // print("Closing popup-window, event.keycode[1]:", event.get_keycode()[1]);
       self.hide();
       self.visible = false;
       return true;

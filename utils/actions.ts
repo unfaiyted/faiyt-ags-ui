@@ -19,9 +19,12 @@ export const actions = {
     play: () => execAsync("playerctl play").catch(print),
   },
   network: {
-    ipinfo: () => execAsync("curl ipinfo.io"), // returns JSON with ip info and location
+    ipInfo: () => execAsync("curl ipinfo.io"), // returns JSON with ip info and location
+    ipCityInfo: () =>
+      execAsync("curl ipinfo.io").then((output) =>
+        JSON.parse(output)["city"].toLowerCase(),
+      ),
   },
-
   brightness: {
     // TODO: implement brightness control
     increase: () => execAsync("brightnessctl set +5%").catch(print),
@@ -43,6 +46,13 @@ export const actions = {
       // Indicator.popup(-1);
     },
   },
+  weather: {
+    update: (city: string) => {
+      return execAsync(
+        `curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`,
+      );
+    },
+  },
   window: {
     toggle: (windowName: string) => {
       execAsync([
@@ -50,6 +60,14 @@ export const actions = {
         "-c",
         `ags request "window toggle ${windowName}"`,
       ]).catch(print);
+    },
+  },
+  app: {
+    screenSnip: () => {
+      // execAsync(`${App.configDir}/scripts/grimblast.sh copy area`)
+    },
+    colorPicker: () => {
+      // execAsync(`${App.configDir}/scripts/color_generation/switchwall.sh`)
     },
   },
 };

@@ -37,7 +37,7 @@ export const TabContainer = (tabContainerProps: TabContainerProps) => {
   let lastActive = Variable(props.active);
   // const count = Math.min(icons.length, names.length);
 
-  print("Tabs length:", props.tabs.length);
+  // print("Tabs length:", props.tabs.length);
 
   const handleHeaderClick = (index: number) => {
     lastActive.set(active.get());
@@ -45,7 +45,7 @@ export const TabContainer = (tabContainerProps: TabContainerProps) => {
   };
 
   active.subscribe((index) => {
-    print("Active tab:", index);
+    // print("Active tab:", index);
 
     activeTab.set(props.tabs[index]);
   });
