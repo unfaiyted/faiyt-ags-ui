@@ -1,14 +1,22 @@
-import Service from "gi://Service";
-// import * as Utils fromgcc
-
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import Soup from "gi://Soup?version=3.0";
-import { fileExists } from "../modules/.miscutils/files.js";
+import { GObject, register, signal, property } from "astal/gobject";
+import { fileExists } from "../utils";
+import { readFile, writeFile, writeFileAsync } from "astal/file";
+import { execAsync, exec } from "astal/process";
+import config from "../utils/config";
+import { AnthropicStreamingEvent } from "../types/claude";
 
-const HISTORY_DIR = `${GLib.get_user_state_dir()}/ags/user/ai/chats/`;
-const HISTORY_FILENAME = `gemini.txt`;
+const HISTORY_DIR = `${config.dir.state}/ags/user/ai/chats/`;
+const HISTORY_FILENAME = `claude.txt`;
 const HISTORY_PATH = HISTORY_DIR + HISTORY_FILENAME;
+const KEY_FILE = `${config.dir.state}/ags/user/ai/anthropic_key.txt`;
+const ENV_KEY = GLib.getenv("ANTHROPIC_API_KEY");
+const APIDOM_FILE_LOCATION = `${config.dir.state}/ags/user/ai/anthropic_api_dom.txt`;
+const CHAT_MODELS = ["claude-3-5-sonnet-2024-1022"];
+const ONE_CYCLE_COUNT = 3;
+
 const initMessages = [
   {
     role: "user",
@@ -97,24 +105,20 @@ const initMessages = [
   },
 ];
 
-if (!fileExists(`${GLib.get_user_config_dir()}/gemini_history.json`)) {
-  Utils.execAsync([
+if (!fileExists(`${config.dir.config}/claude_history.json`)) {
+  execAsync([
     `bash`,
     `-c`,
-    `touch ${GLib.get_user_config_dir()}/gemini_history.json`,
+    `touch ${config.dir.config}/claude_history.json`,
   ]).catch(print);
-  Utils.writeFile(
-    "[ ]",
-    `${GLib.get_user_config_dir()}/gemini_history.json`,
-  ).catch(print);
+  writeFile("[ ]", `${config.dir.config}/claude_history.json`);
 }
 
-Utils.exec(`mkdir -p ${GLib.get_user_state_dir()}/ags/user/ai`);
-const KEY_FILE_LOCATION = `${GLib.get_user_state_dir()}/ags/user/ai/google_key.txt`;
-const APIDOM_FILE_LOCATION = `${GLib.get_user_state_dir()}/ags/user/ai/google_api_dom.txt`;
-function replaceapidom(URL) {
+exec(`mkdir -p ${config.dir.config}/ags/user/ai`);
+
+function replaceapidom(URL: string) {
   if (fileExists(APIDOM_FILE_LOCATION)) {
-    var contents = Utils.readFile(APIDOM_FILE_LOCATION).trim();
+    var contents = readFile(APIDOM_FILE_LOCATION).trim();
     var URL = URL.toString().replace(
       "generativelanguage.googleapis.com",
       contents,
@@ -122,36 +126,29 @@ function replaceapidom(URL) {
   }
   return URL;
 }
-const CHAT_MODELS = ["gemini-1.5-flash"];
-const ONE_CYCLE_COUNT = 3;
 
-class GeminiMessage extends Service {
-  static {
-    Service.register(
-      this,
-      {
-        delta: ["string"],
-      },
-      {
-        content: ["string"],
-        thinking: ["boolean"],
-        done: ["boolean"],
-      },
-    );
-  }
+@register()
+export class ClaudeMessage extends GObject.Object {
+  private _role = "";
+  private _parts = [{ text: "" }];
+  private _isThinking = true;
+  private _isDone = false;
+  private _rawData = "";
+  private _parserState = { parsed: "", stack: [] };
 
-  _role = "";
-  _parts = [{ text: "" }];
-  _thinking;
-  _done = false;
-  _rawData = "";
+  @signal(String) declare delta: (_delta: string) => void;
 
-  constructor(role, content, thinking = true, done = false) {
+  constructor(
+    initialRole: string,
+    initialContent: string,
+    thinking = true,
+    done = false,
+  ) {
     super();
-    this._role = role;
-    this._parts = [{ text: content }];
-    this._thinking = thinking;
-    this._done = done;
+    this._role = initialRole;
+    this._parts = [{ text: initialContent }];
+    this._isThinking = thinking;
+    this._isDone = done;
   }
 
   get rawData() {
@@ -161,11 +158,12 @@ class GeminiMessage extends Service {
     this._rawData = value;
   }
 
+  @property(Boolean)
   get done() {
-    return this._done;
+    return this._isDone;
   }
-  set done(isDone) {
-    this._done = isDone;
+  set done(isDone: boolean) {
+    this._isDone = isDone;
     this.notify("done");
   }
 
@@ -177,6 +175,7 @@ class GeminiMessage extends Service {
     this.emit("changed");
   }
 
+  @property(String)
   get content() {
     return this._parts.map((part) => part.text).join();
   }
@@ -189,23 +188,23 @@ class GeminiMessage extends Service {
   get parts() {
     return this._parts;
   }
-
   get label() {
     return this._parserState.parsed + this._parserState.stack.join("");
   }
 
+  @property(Boolean)
   get thinking() {
-    return this._thinking;
+    return this._isThinking;
   }
   set thinking(value) {
-    this._thinking = value;
+    this._isThinking = value;
     this.notify("thinking");
     this.emit("changed");
   }
 
-  addDelta(delta) {
-    if (this.thinking) {
-      this.thinking = false;
+  addDelta(delta: string) {
+    if (this._isThinking) {
+      this._isThinking = false;
       this.content = delta;
     } else {
       this.content += delta;
@@ -214,8 +213,8 @@ class GeminiMessage extends Service {
   }
 
   parseSection() {
-    if (this._thinking) {
-      this.thinking = false;
+    if (this._isThinking) {
+      this._isThinking = false;
       this._parts[0].text = "";
     }
     const parsedData = JSON.parse(this._rawData);
@@ -231,35 +230,44 @@ class GeminiMessage extends Service {
   }
 }
 
-class GeminiService extends Service {
-  static {
-    Service.register(this, {
-      initialized: [],
-      clear: [],
-      newMsg: ["int"],
-      hasKey: ["boolean"],
-    });
-  }
+export interface Message {
+  role: string;
+  parts: Array<{ text: string }>;
+}
 
-  _assistantPrompt = userOptions.ai.enhancements;
+export class ClaudeService extends GObject.Object {
+  // static {
+  //   Service.register(this, {
+  //     initialized: [],
+  //     clear: [],
+  //     newMsg: ["int"],
+  //     hasKey: ["boolean"],
+  //   });
+  // }
+
+  @signal() declare initialized: (isInit: boolean) => {};
+  @signal(Number) declare newMsg: (msgId: number) => {};
+  @signal(Boolean) declare hasKey: (hasKey: boolean) => {};
+
+  _assistantPrompt = config.ai.enhancements;
   _cycleModels = true;
-  _usingHistory = userOptions.ai.useHistory;
+  _usingHistory = config.ai.useHistory;
   _key = "";
   _requestCount = 0;
-  _safe = userOptions.ai.safety;
-  _temperature = userOptions.ai.defaultTemperature;
-  _messages = [];
+  _safe = config.ai.safety;
+  _temperature = config.ai.defaultTemperature;
+  _messages: Message[] = [];
   _modelIndex = 0;
   _decoder = new TextDecoder();
 
   constructor() {
     super();
 
-    if (fileExists(KEY_FILE_LOCATION))
-      this._key = Utils.readFile(KEY_FILE_LOCATION).trim();
+    if (ENV_KEY) this._key = ENV_KEY;
+    else if (fileExists(KEY_FILE)) this._key = readFile(KEY_FILE).trim();
     else this.emit("hasKey", false);
 
-    // if (this._usingHistory) Utils.timeout(1000, () => this.loadHistory());
+    // if (this._usingHistory) timeout(1000, () => this.loadHistory());
     if (this._usingHistory) this.loadHistory();
     else this._messages = this._assistantPrompt ? [...initMessages] : [];
 
@@ -271,15 +279,15 @@ class GeminiService extends Service {
   }
 
   get keyPath() {
-    return KEY_FILE_LOCATION;
+    return KEY_FILE;
   }
   get key() {
     return this._key;
   }
   set key(keyValue) {
     this._key = keyValue;
-    Utils.writeFile(this._key, KEY_FILE_LOCATION)
-      .then(this.emit("hasKey", true))
+    writeFileAsync(this._key, KEY_FILE)
+      .then(() => this.emit("hasKey", true))
       .catch(print);
   }
 
@@ -326,10 +334,10 @@ class GeminiService extends Service {
   }
 
   saveHistory() {
-    Utils.exec(`bash -c 'mkdir -p ${HISTORY_DIR} && touch ${HISTORY_PATH}'`);
-    Utils.writeFile(
+    exec(`bash -c 'mkdir -p ${HISTORY_DIR} && touch ${HISTORY_PATH}'`);
+    writeFile(
       JSON.stringify(
-        this._messages.map((msg) => {
+        this._messages.map((msg: Message) => {
           let m = { role: msg.role, parts: msg.parts };
           return m;
         }),
@@ -346,8 +354,8 @@ class GeminiService extends Service {
 
   appendHistory() {
     if (fileExists(HISTORY_PATH)) {
-      const readfile = Utils.readFile(HISTORY_PATH);
-      JSON.parse(readfile).forEach((element) => {
+      const readfile = readFile(HISTORY_PATH);
+      JSON.parse(readfile).forEach((element: Message) => {
         // this._messages.push(element);
         this.addMessage(element.role, element.parts[0].text);
       });
@@ -361,6 +369,7 @@ class GeminiService extends Service {
     }
   }
 
+  @signal()
   clear() {
     this._messages = this._assistantPrompt ? [...initMessages] : [];
     if (this._usingHistory) this.saveHistory();
@@ -376,7 +385,7 @@ class GeminiService extends Service {
     else this._messages = [];
   }
 
-  readResponse(stream, aiResponse) {
+  readResponse(stream, aiResponse: AnthropicStreamingEvent) {
     stream.read_line_async(0, null, (stream, res) => {
       try {
         const [bytes] = stream.read_line_finish(res);
@@ -385,7 +394,7 @@ class GeminiService extends Service {
         if (line == "[{") {
           // beginning of response
           aiResponse._rawData += "{";
-          this.thinking = false;
+          // this._isThinking = false;
         } else if (line == ",\u000d" || line == "]") {
           // end of stream pulse
           aiResponse.parseSection();
@@ -401,59 +410,59 @@ class GeminiService extends Service {
     });
   }
 
-  addMessage(role, message) {
-    this._messages.push(new GeminiMessage(role, message, false));
+  isKeySet() {
+    return this._key.length > 0;
+  }
+
+  addMessage(role: string, message: string) {
+    this._messages.push(new ClaudeMessage(role, message, false));
     this.emit("newMsg", this._messages.length - 1);
   }
 
-  send(msg) {
-    this._messages.push(new GeminiMessage("user", msg, false));
+  send(msg: string) {
+    this._messages.push(new ClaudeMessage("user", msg, false));
     this.emit("newMsg", this._messages.length - 1);
-    const aiResponse = new GeminiMessage("model", "thinking...", true, false);
+    const aiResponse = new ClaudeMessage("model", "thinking...", true, false);
 
     const body = {
-      contents: this._messages.map((msg) => {
+      model: this.modelName,
+      messages: this._messages.map((msg) => {
         let m = { role: msg.role, parts: msg.parts };
         return m;
       }),
-      safetySettings: this._safe
-        ? []
-        : [
-            // { category: "HARM_CATEGORY_DEROGATORY", threshold: "BLOCK_NONE", },
-            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_NONE",
-            },
-            // { category: "HARM_CATEGORY_UNSPECIFIED", threshold: "BLOCK_NONE", },
-          ],
-      generationConfig: {
-        temperature: this._temperature,
-      },
-      // "key": this._key,
-      // "apiKey": this._key,
+      max_tokens: 1024,
+      stream: true,
     };
+
     const proxyResolver = new Gio.SimpleProxyResolver({
-      "default-proxy": userOptions.ai.proxyUrl,
+      defaultProxy: config.ai.proxyUrl || undefined,
     });
-    const session = new Soup.Session({ "proxy-resolver": proxyResolver });
+
+    const requestHeaders = new Soup.MessageHeaders(
+      Soup.MessageHeadersType.REQUEST,
+    );
+
+    requestHeaders.append("Content-Type", "application/json");
+    requestHeaders.append("anthropic-version", "2023-06-01");
+    requestHeaders.append("x-api-key", ENV_KEY || this._key);
+
+    const session = new Soup.Session({ proxyResolver });
     const message = new Soup.Message({
       method: "POST",
+      requestHeaders: requestHeaders,
       uri: GLib.Uri.parse(
-        replaceapidom(
-          `https://generativelanguage.googleapis.com/v1/models/${this.modelName}:streamGenerateContent?key=${this._key}`,
-        ),
+        `https://api.anthropic.com/v1/messages`,
         GLib.UriFlags.NONE,
       ),
     });
-    message.request_headers.append("Content-Type", `application/json`);
+
     message.set_request_body_from_bytes(
       "application/json",
-      new GLib.Bytes(JSON.stringify(body)),
+      // TODO: Fix this as im not sure this typing works
+      new GLib.Bytes(JSON.stringify(body) as unknown as Uint8Array),
     );
 
-    session.send_async(message, GLib.DEFAULT_PRIORITY, null, (_, result) => {
+    session.send_async(message, GLib.PRIORITY_DEFAULT, null, (_, result) => {
       const stream = session.send_finish(result);
       this.readResponse(
         new Gio.DataInputStream({
@@ -476,4 +485,4 @@ class GeminiService extends Service {
   }
 }
 
-export default new GeminiService();
+export default new ClaudeService();

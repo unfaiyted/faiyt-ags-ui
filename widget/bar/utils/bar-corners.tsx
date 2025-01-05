@@ -1,6 +1,6 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
-import { enableClickthrough } from "../../../utils/utils";
+import { enableClickthrough } from "../../../utils";
 import { interval, timeout, idle } from "astal/time";
 import { Context } from "cairo";
 import { RgbaColor } from "../types";

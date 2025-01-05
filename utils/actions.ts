@@ -30,6 +30,13 @@ export const actions = {
     increase: () => execAsync("brightnessctl set +5%").catch(print),
     decrease: () => execAsync("brightnessctl set -5%").catch(print),
   },
+  keyboard: {
+    backlight: {
+      // TODO:
+      // increase: () => execAsync("light -A 5").catch(print),
+      // decrease: () => execAsync("light -U 5").catch(print),
+    },
+  },
   audio: {
     increase: () => {
       if (!audio || !audio.default_speaker) return;

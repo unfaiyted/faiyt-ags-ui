@@ -40,13 +40,13 @@ export default function SideModule(sideModuleProps: SideModuleProps) {
             `FeelsLike${config.weather.preferredUnit}`
           ];
 
-        print("weather code:", weatherCode);
+        // print("weather code:", weatherCode);
 
         const currWeatherSymbol =
           WeatherSymbol[
             WwoCode[weatherCode].toUpperCase() as keyof typeof WeatherSymbol
           ];
-        print(currWeatherSymbol);
+        // print(currWeatherSymbol);
 
         weatherSymbol.set(currWeatherSymbol);
         weatherLabel.set(
@@ -74,7 +74,7 @@ export default function SideModule(sideModuleProps: SideModuleProps) {
             WeatherSymbol[
               WwoCode[weatherCode].toUpperCase() as keyof typeof WeatherSymbol
             ];
-          print(currWeatherSymbol);
+          // print(currWeatherSymbol);
 
           weatherSymbol.set(currWeatherSymbol);
           weatherLabel.set(

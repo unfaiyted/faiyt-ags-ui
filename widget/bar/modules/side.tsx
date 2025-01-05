@@ -1,7 +1,7 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
-import { getScrollDirection } from "../../../utils/utils";
-import { ClickButtonPressed } from "../types";
+import { getScrollDirection } from "../../../utils";
+import { ClickButtonPressed } from "../../../types";
 
 export interface SideModuleProps extends Widget.EventBoxProps {
   onScrollUp?: () => void;

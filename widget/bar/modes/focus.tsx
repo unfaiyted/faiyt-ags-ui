@@ -3,7 +3,7 @@ import { Widget } from "astal/gtk3";
 import { bind } from "astal";
 import config from "../../../utils/config";
 import Workspaces from "../modules/workspaces";
-import { getScrollDirection } from "../../../utils/utils";
+import { getScrollDirection } from "../../../utils";
 import Hypr from "gi://AstalHyprland";
 import Gio from "gi://Gio";
 import { FocusBarContentProps } from "../types";

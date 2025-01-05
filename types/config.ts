@@ -225,6 +225,17 @@ export interface BarConfig {
   default: BarMode;
 }
 
+export interface DirConfig {
+  home: string;
+  cache: string;
+  config: string;
+  state: string;
+  systemConfig: string[];
+  data: string;
+  systemData: string[];
+  runtime: string;
+}
+
 export interface ConfigOptions {
   ai?: AiConfig;
   animations?: AnimationsConfig;
@@ -248,6 +259,7 @@ export interface ConfigOptions {
   icons?: IconsConfig;
   keybinds?: KeybindsConfig;
   bar?: BarConfig;
+  dir?: DirConfig;
 }
 
 export interface MergedConfig extends ConfigOptions {
@@ -273,4 +285,5 @@ export interface MergedConfig extends ConfigOptions {
   icons: IconsConfig;
   keybinds: KeybindsConfig;
   bar: BarConfig;
+  dir: DirConfig;
 }

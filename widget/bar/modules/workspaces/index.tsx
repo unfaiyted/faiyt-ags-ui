@@ -8,8 +8,8 @@ import { handleHyprResponse } from "../../../../utils/handlers";
 import config from "../../../../utils/config";
 import { Variable } from "astal";
 import { Widget, Astal, Gdk } from "astal/gtk3";
-import { getScrollDirection } from "../../../../utils/utils";
-import { ClickButtonPressed } from "../../types";
+import { getScrollDirection } from "../../../../utils";
+import { ClickButtonPressed } from "../../../../types";
 import Hypr from "gi://AstalHyprland";
 
 export default function Workspaces(workspacesProps: BaseWorkspacesProps) {

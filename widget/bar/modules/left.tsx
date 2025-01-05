@@ -2,7 +2,7 @@ import { App, Astal, Gtk, Gdk } from "astal/gtk3";
 import { Widget } from "astal/gtk3";
 import SideModule from "./side";
 import { actions } from "../../../utils/actions";
-import { UIWindows } from "../types";
+import { UIWindows } from "../../../types";
 
 export interface LeftSideModuleProps extends Widget.EventBoxProps {}
 

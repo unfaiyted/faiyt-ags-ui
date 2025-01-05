@@ -18,9 +18,10 @@ export const getScrollDirection = (
   }
 };
 
-const isIcon = (icon: string) => !!Astal.Icon.lookup_icon(icon);
+export const isIcon = (icon: string) => !!Astal.Icon.lookup_icon(icon);
 
-const fileExists = (path: string) => GLib.file_test(path, GLib.FileTest.EXISTS);
+export const fileExists = (path: string) =>
+  GLib.file_test(path, GLib.FileTest.EXISTS);
 
-const time = (time: number, format = "%H:%M") =>
+export const time = (time: number, format = "%H:%M") =>
   GLib.DateTime.new_from_unix_local(time).format(format)!;

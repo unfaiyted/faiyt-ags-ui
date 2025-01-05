@@ -4,18 +4,6 @@ import * as WorkspaceTypes from "./modules/workspaces/types";
 import * as TrayTypes from "./modules/tray/types";
 import * as ClockTypes from "./modules/clock/types";
 
-export enum ClickButtonPressed {
-  LEFT = 1,
-  MIDDLE = 2,
-  RIGHT = 3,
-}
-
-export enum UIWindows {
-  SIDEBAR_LEFT = "sidebar-left",
-  SIDEBAR_RIGHT = "sidebar-right",
-  TOP_BAR = "bar",
-}
-
 export enum BarMode {
   Normal = "normal",
   Focus = "focus",

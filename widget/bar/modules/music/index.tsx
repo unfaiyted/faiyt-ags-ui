@@ -22,9 +22,8 @@ export default function Music(musicModuleProps: MusicModuleProps) {
   const player = Variable(mpris.get_players()[0]).poll(1000, () => {
     const currentPlayer = mpris.get_players()[0];
 
-    print("Current player:", currentPlayer.identity);
-
     if (!currentPlayer) return lastPlayer;
+    print("Current player:", currentPlayer.identity);
     if (lastPlayer && currentPlayer.identity === lastPlayer.identity)
       return currentPlayer;
 
@@ -85,6 +84,7 @@ export default function Music(musicModuleProps: MusicModuleProps) {
   if (player.get()) {
     updatePlayer(player.get());
   }
+
   return (
     <eventbox onClick={handleClick}>
       <BarGroup>
@@ -96,6 +96,7 @@ export default function Music(musicModuleProps: MusicModuleProps) {
           >
             <box
               valign={Gtk.Align.CENTER}
+              visible={bind(player).as((v) => v != null)}
               className={bind(playbackStatus).as((v) => {
                 switch (v) {
                   case Mpris.PlaybackStatus.PLAYING:
@@ -111,11 +112,10 @@ export default function Music(musicModuleProps: MusicModuleProps) {
               // setup={boxSetup}
               css={`
                 min-width: 2px;
-                padding-left: 0.35rem;
+                padding-left: 0.15rem;
               `}
             >
               <PlayingState status={bind(playbackStatus)} />
-              {/* <TrackProgress startAt={0} endAt={360} value={bind(value)} /> */}
               <TrackTitle title={bind(title)} artist={bind(artist)} />
             </box>
           </overlay>

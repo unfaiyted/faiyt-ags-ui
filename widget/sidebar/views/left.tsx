@@ -23,7 +23,7 @@ export default function LeftSideBar(sideBarProps: LeftSideBarProps) {
     enabledTabs.includes(tab.name.toLowerCase()),
   );
 
-  print("Sidebar tabs:", sidebarTabs);
+  // print("Sidebar tabs:", sidebarTabs);
 
   sidebarTabs.map((tab) => print("Tab name:", tab.name));
 
@@ -36,20 +36,7 @@ export default function LeftSideBar(sideBarProps: LeftSideBarProps) {
       application={App}
     >
       <box vexpand={true} css="min-width: 2px;">
-        {/* Toggles? */}
         <Tabs tabs={sidebarTabs} active={0} />
-        {/* <PhosphorIcon icon={PhosphorIcons.acorn} size={32} /> */}
-        {/* <PhosphorIcon icon={PhosphorIcons.airplane} size={32} /> */}
-        {/* <PhosphorIcon */}
-        {/*   icon={PhosphorIcons.airplane} */}
-        {/*   weight={PhosphorWeight.BOLD} */}
-        {/*   size={32} */}
-        {/* /> */}
-        {/* <icon */}
-        {/*   file="./assets/icons/ai-zukijourney.png" */}
-        {/*   css={``} */}
-        {/*   pixel_size={32} */}
-        {/* /> */}
       </box>
     </SideBar>
   );

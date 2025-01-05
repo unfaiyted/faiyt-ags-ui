@@ -5,7 +5,7 @@ import { ConfigOptions, MergedConfig } from "../types/config";
 import { BarMode } from "../widget/bar/types";
 
 // Default options.
-// Add overrides in ~/.config/ags/user_options.js
+// Add overrides in /config
 let defaultConfigOptions: ConfigOptions = {
   // General stuff
   ai: {
@@ -240,6 +240,16 @@ let defaultConfigOptions: ConfigOptions = {
     // These are the modes you will be able to cycle between. If you remove a mode, it will be hidden.
     modes: [BarMode.Normal, BarMode.Focus, BarMode.Nothing],
     default: BarMode.Normal,
+  },
+  dir: {
+    home: GLib.get_home_dir(),
+    cache: GLib.get_user_cache_dir(),
+    config: GLib.get_user_config_dir(),
+    state: GLib.get_user_state_dir(),
+    systemConfig: GLib.get_system_config_dirs(),
+    systemData: GLib.get_system_data_dirs(),
+    data: GLib.get_user_data_dir(),
+    runtime: GLib.get_user_runtime_dir(),
   },
 };
 
