@@ -1,28 +1,24 @@
+import { Widget, Gtk, Gdk } from "astal/gtk3";
 
-// export const SystemMessage = (content, commandName, scrolledWindow) => {
-//     const messageContentBox = MessageContent(content);
-//     const thisMessage = Box({
-//         className: 'sidebar-chat-message',
-//         children: [
-//             Box({
-//                 vertical: true,
-//                 children: [
-//                     Label({
-//                         xalign: 0,
-//                         hpack: 'start',
-//                         className: 'txt txt-bold sidebar-chat-name sidebar-chat-name-system',
-//                         wrap: true,
-//                         label: `System  •  ${commandName}`,
-//                     }),
-//                     messageContentBox,
-//                 ],
-//             })
-//         ],
-//     });
-//     return thisMessage;
-// }
+export interface SystemMessageProps extends Widget.BoxProps {
+  commandName: string;
+  content: string;
+}
 
-
-export const SystemMessage = (props: Widget.BoxProps) => {
-  return ()
-  }
+export const SystemMessage = (props: SystemMessageProps) => {
+  const messageContent = MessageContent(props.content);
+  return (
+    <box className="sidebar-chat-message">
+      <box vertical>
+        <label
+          xalign={0}
+          halign={Gtk.Align.START}
+          wrap
+          label={`System  •  ${props.commandName}`}
+          className="txt txt-bold sidebar-chat-name sidebar-chat-name-system"
+        />
+        {messageContent}
+      </box>
+    </box>
+  );
+};

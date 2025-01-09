@@ -4,18 +4,19 @@ import { AIName } from "./index";
 import { Variable, bind } from "astal";
 import { ClaudeService } from "../../../../services/claude";
 import { timeout } from "astal/time";
+import { ChatMessage } from "./utils/chat-message";
+import { SystemMessage } from "./uitls/system-message";
 
 const chatContent = Variable<Array<Widget.Box>>([]);
 const claudeService = new ClaudeService();
 
 const appendChatContent = (newContent) => {
-chatContent.set(chatContent.get().concat(newContent));
-}
+  chatContent.set(chatContent.get().concat(newContent));
+};
 
 const clearChat = () => {
   chatContent.set([]);
-}
-
+};
 
 type CommandHandler = (args: string) => void;
 
@@ -30,14 +31,14 @@ const commands: Record<string, CommandHandler> = {
       SystemMessage(
         `Currently using \`${GeminiService.modelName}\``,
         "/model",
-        geminiView
-      )
+        geminiView,
+      ),
     );
   },
   prompt: (args) => {
     if (!args) {
       appendChatContent(
-        SystemMessage(`Usage: \`/prompt MESSAGE\``, "/prompt", geminiView)
+        SystemMessage(`Usage: \`/prompt MESSAGE\``, "/prompt", geminiView),
       );
       return;
     }
@@ -49,8 +50,8 @@ const commands: Record<string, CommandHandler> = {
         SystemMessage(
           `Key stored in: \n\`${GeminiService.keyPath}\`\nTo update this key, type \`/key YOUR_API_KEY\``,
           "/key",
-          geminiView
-        )
+          geminiView,
+        ),
       );
       return;
     }
@@ -58,16 +59,16 @@ const commands: Record<string, CommandHandler> = {
     appendChatContent(
       SystemMessage(
         `Updated API Key at\n\`${GeminiService.keyPath}\``,
-        "/
-
-
-
-const handleCommand = (message: string) => {
+        "/key",
+        geminiView,
+      ),
+    );
+  },
+};
 
 export interface ClaudeAIProps extends Widget.BoxProps {}
 
-
-
+const handleCommand = (message: string) => {};
 
 // [AIName.GEMINI]: {
 //   label: "Gemini",
