@@ -25,3 +25,20 @@ export const fileExists = (path: string) =>
 
 export const time = (time: number, format = "%H:%M") =>
   GLib.DateTime.new_from_unix_local(time).format(format)!;
+
+/**
+ * Parses a command from a message.
+ * @param message The message to parse.
+ * @returns An object containing the command and its arguments.
+ */
+export const parseCommand = (
+  message: string,
+): { command: string; args: string } => {
+  if (!message.startsWith("/")) return { command: "", args: "" };
+
+  const parts = message.split(" ");
+  const command = parts[0].slice(1); // Remove the '/'
+  const args = parts.slice(1).join(" ");
+
+  return { command, args };
+};

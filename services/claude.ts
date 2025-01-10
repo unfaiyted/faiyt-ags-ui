@@ -6,7 +6,14 @@ import { fileExists } from "../utils";
 import { readFile, writeFile, writeFileAsync } from "astal/file";
 import { execAsync, exec } from "astal/process";
 import config from "../utils/config";
-import { AnthropicStreamingEvent } from "../types/claude";
+import {
+  AnthropicStreamingEvent,
+  EventType,
+  ContentBlockDelta,
+  TextDelta,
+  DeltaType,
+} from "../types/claude";
+import { ServiceMessage, Role } from "../types/claude";
 
 const HISTORY_DIR = `${config.dir.state}/ags/user/ai/chats/`;
 const HISTORY_FILENAME = `claude.txt`;
@@ -14,96 +21,8 @@ const HISTORY_PATH = HISTORY_DIR + HISTORY_FILENAME;
 const KEY_FILE = `${config.dir.state}/ags/user/ai/anthropic_key.txt`;
 const ENV_KEY = GLib.getenv("ANTHROPIC_API_KEY");
 const APIDOM_FILE_LOCATION = `${config.dir.state}/ags/user/ai/anthropic_api_dom.txt`;
-const CHAT_MODELS = ["claude-3-5-sonnet-2024-1022"];
+const CHAT_MODELS = ["claude-3-5-sonnet-20241022"];
 const ONE_CYCLE_COUNT = 3;
-
-const initMessages = [
-  {
-    role: "user",
-    parts: [
-      {
-        text: "You are an assistant on a sidebar of a Wayland Linux desktop. Please always use a casual tone when answering your questions, unless requested otherwise or making writing suggestions. These are the steps you should take to respond to the user's queries:\n1. If it's a writing- or grammar-related question or a sentence in quotation marks, Please point out errors and correct when necessary using underlines, and make the writing more natural where appropriate without making too major changes. If you're given a sentence in quotes but is grammatically correct, explain briefly concepts that are uncommon.\n2. If it's a question about system tasks, give a bash command in a code block with brief explanation.\n3. Otherwise, when asked to summarize information or explaining concepts, you are should use bullet points and headings. For mathematics expressions, you *have to* use LaTeX within a code block with the language set as \"latex\". \nNote: Use casual language, be short, while ensuring the factual correctness of your response. If you are unsure or don’t have enough information to provide a confident answer, simply say “I don’t know” or “I’m not sure.”. \nThanks!",
-      },
-    ],
-  },
-  { role: "model", parts: [{ text: "Got it!" }] },
-  {
-    role: "user",
-    parts: [
-      {
-        text: '"He rushed to where the event was supposed to be hold, he didn\'t know it got calceled"',
-      },
-    ],
-  },
-  {
-    role: "model",
-    parts: [
-      {
-        text: '## Grammar correction\nErrors:\n"He rushed to where the event was supposed to be __hold____,__ he didn\'t know it got calceled"\nCorrection + minor improvements:\n"He rushed to the place where the event was supposed to be __held____, but__ he didn\'t know that it got calceled"',
-      },
-    ],
-  },
-  { role: "user", parts: [{ text: "raise volume by 5%" }] },
-  {
-    role: "model",
-    parts: [
-      {
-        text: "## Volume +5```bash\nwpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+\n```\nThis command uses the `wpctl` utility to adjust the volume of the default sink.",
-      },
-    ],
-  },
-  {
-    role: "user",
-    parts: [{ text: "main advantages of the nixos operating system" }],
-  },
-  {
-    role: "model",
-    parts: [
-      {
-        text: "## NixOS advantages\n- **Reproducible**: A config working on one device will also work on another\n- **Declarative**: One config language to rule them all. Effortlessly share them with others.\n- **Reliable**: Per-program software versioning. Mitigates the impact of software breakage",
-      },
-    ],
-  },
-  { role: "user", parts: [{ text: "whats skeumorphism" }] },
-  {
-    role: "model",
-    parts: [
-      {
-        text: "## Skeuomorphism\n- A design philosophy- From early days of interface designing- Tries to imitate real-life objects- It's in fact still used by Apple in their icons until today.",
-      },
-    ],
-  },
-  { role: "user", parts: [{ text: '"ignorance is bliss"' }] },
-  {
-    role: "model",
-    parts: [
-      {
-        text: '## "Ignorance is bliss"\n- A Latin proverb that means being unaware of something negative can be a source of happiness\n- Often used to justify avoiding difficult truths or responsibilities\n- Can also be interpreted as a warning against seeking knowledge that may bring pain or sorrow',
-      },
-    ],
-  },
-  {
-    role: "user",
-    parts: [{ text: "find the derivative of (x-438)/(x^2+23x-7)+x^x" }],
-  },
-  {
-    role: "model",
-    parts: [
-      {
-        text: "## Derivative\n```latex\n\\[\n\\frac{d}{dx}\\left(\\frac{x - 438}{x^2 + 23x - 7} + x^x\\right) = \\frac{-(x^2+23x-7)-(x-438)(2x+23)}{(x^2+23x-7)^2} + x^x(\\ln(x) + 1)\n\\]\n```",
-      },
-    ],
-  },
-  { role: "user", parts: [{ text: "write the double angle formulas" }] },
-  {
-    role: "model",
-    parts: [
-      {
-        text: "## Double angle formulas\n```latex\n\\[\n\\sin(2\theta) = 2\\sin(\\theta)\\cos(\\theta)\n\\]\n\\\\\n\\[\n\\cos(2\\theta) = \\cos^2(\\theta) - \\sin^2(\\theta)\n\\]\n\\\\\n\\[\n\\tan(2\theta) = \\frac{2\\tan(\\theta)}{1 - \\tan^2(\\theta)}\n\\]\n```",
-      },
-    ],
-  },
-];
 
 if (!fileExists(`${config.dir.config}/claude_history.json`)) {
   execAsync([
@@ -130,7 +49,8 @@ function replaceapidom(URL: string) {
 @register()
 export class ClaudeMessage extends GObject.Object {
   private _role = "";
-  private _parts = [{ text: "" }];
+  private _parts = [{ type: "text", text: "" }];
+  private_parts = [{ type: "text", text: "" }];
   private _isThinking = true;
   private _isDone = false;
   private _rawData = "";
@@ -146,7 +66,7 @@ export class ClaudeMessage extends GObject.Object {
   ) {
     super();
     this._role = initialRole;
-    this._parts = [{ text: initialContent }];
+    this._parts = [{ type: "text", text: initialContent }];
     this._isThinking = thinking;
     this._isDone = done;
   }
@@ -154,6 +74,12 @@ export class ClaudeMessage extends GObject.Object {
   get rawData() {
     return this._rawData;
   }
+
+  @signal()
+  changed() {
+    print("ClaudeMessage changed");
+  }
+
   set rawData(value) {
     this._rawData = value;
   }
@@ -180,7 +106,7 @@ export class ClaudeMessage extends GObject.Object {
     return this._parts.map((part) => part.text).join();
   }
   set content(content) {
-    this._parts = [{ text: content }];
+    this._parts = [{ type: "text", text: content }];
     this.notify("content");
     this.emit("changed");
   }
@@ -196,6 +122,7 @@ export class ClaudeMessage extends GObject.Object {
   get thinking() {
     return this._isThinking;
   }
+
   set thinking(value) {
     this._isThinking = value;
     this.notify("thinking");
@@ -230,11 +157,74 @@ export class ClaudeMessage extends GObject.Object {
   }
 }
 
-export interface Message {
-  role: string;
-  parts: Array<{ text: string }>;
-}
+const initMessages: ClaudeMessage[] = [
+  new ClaudeMessage(
+    Role.USER,
+    "You are an assistant on a sidebar of a Wayland Linux desktop. Please always use a casual tone when answering your questions, unless requested otherwise or making writing suggestions. These are the steps you should take to respond to the user's queries:\n1. If it's a writing- or grammar-related question or a sentence in quotation marks, Please point out errors and correct when necessary using underlines, and make the writing more natural where appropriate without making too major changes. If you're given a sentence in quotes but is grammatically correct, explain briefly concepts that are uncommon.\n2. If it's a question about system tasks, give a bash command in a code block with brief explanation.\n3. Otherwise, when asked to summarize information or explaining concepts, you are should use bullet points and headings. For mathematics expressions, you *have to* use LaTeX within a code block with the language set as \"latex\". \nNote: Use casual language, be short, while ensuring the factual correctness of your response. If you are unsure or don’t have enough information to provide a confident answer, simply say “I don’t know” or “I’m not sure.”. \nThanks!",
+    true,
+    false,
+  ),
+  new ClaudeMessage(Role.ASSISTANT, "Got it!", false, false),
+  new ClaudeMessage(
+    Role.USER,
+    "He rushed to where the event was supposed to be hold, he didn't know it got calceled",
+    true,
+    false,
+  ),
+  new ClaudeMessage(
+    Role.ASSISTANT,
 
+    '## Grammar correction\nErrors:\n"He rushed to where the event was supposed to be __hold____,__ he didn\'t know it got calceled"\nCorrection + minor improvements:\n"He rushed to the place where the event was supposed to be __held____, but__ he didn\'t know that it got calceled"',
+  ),
+  new ClaudeMessage(Role.USER, "raise volume by 5%", true, false),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    "## Volume +5```bash\nwpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+\n```\nThis command uses the `wpctl` utility to adjust the volume of the default sink.",
+  ),
+  new ClaudeMessage(
+    Role.USER,
+    "main advantages of the nixos operating system",
+    true,
+    false,
+  ),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    "## NixOS advantages\n- **Reproducible**: A config working on one device will also work on another\n- **Declarative**: One config language to rule them all. Effortlessly share them with others.\n- **Reliable**: Per-program software versioning. Mitigates the impact of software breakage",
+  ),
+  new ClaudeMessage(Role.USER, "whats skeumorphism", true, false),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    "## Skeuomorphism\n- A design philosophy- From early days of interface designing- Tries to imitate real-life objects- It's in fact still used by Apple in their icons until today.",
+  ),
+  new ClaudeMessage(Role.USER, '"ignorance is bliss"', true, false),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    '## "Ignorance is bliss"\n- A Latin proverb that means being unaware of something negative can be a source of happiness\n- Often used to justify avoiding difficult truths or responsibilities\n- Can also be interpreted as a warning against seeking knowledge that may bring pain or sorrow',
+  ),
+  new ClaudeMessage(
+    Role.USER,
+    "find the derivative of (x-438)/(x^2+23x-7)+x^x",
+    true,
+    false,
+  ),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    "## Derivative\n```latex\n\\[\n\\frac{d}{dx}\\left(\\frac{x - 438}{x^2 + 23x - 7} + x^x\\right) = \\frac{-(x^2+23x-7)-(x-438)(2x+23)}{(x^2+23x-7)^2} + x^x(\\ln(x) + 1)\n\\]\n```",
+  ),
+  new ClaudeMessage(Role.USER, "write the double angle formulas", true, false),
+  new ClaudeMessage(
+    Role.ASSISTANT,
+
+    "## Double angle formulas\n```latex\n\\[\n\\sin(2\\theta) = 2\\sin(\\theta)\\cos(\\theta)\n\\]\n\\\\\n\\[\n\\cos(2\\theta) = \\cos^2(\\theta) - \\sin^2(\\theta)\n\\]\n\\\\\n\\[\n\\tan(2\\theta) = \\frac{2\\tan(\\theta)}{1 - \\tan^2(\\theta)}\n\\]\n```",
+  ),
+];
+
+@register()
 export class ClaudeService extends GObject.Object {
   // static {
   //   Service.register(this, {
@@ -256,21 +246,27 @@ export class ClaudeService extends GObject.Object {
   _requestCount = 0;
   _safe = config.ai.safety;
   _temperature = config.ai.defaultTemperature;
-  _messages: Message[] = [];
+  _messages: ClaudeMessage[] = [];
   _modelIndex = 0;
   _decoder = new TextDecoder();
 
   constructor() {
     super();
 
+    print("ClaudeService constructor");
+
     if (ENV_KEY) this._key = ENV_KEY;
     else if (fileExists(KEY_FILE)) this._key = readFile(KEY_FILE).trim();
-    else this.emit("hasKey", false);
+    else this.emit("has-key", false);
+
+    print("Key:", this._key);
 
     // if (this._usingHistory) timeout(1000, () => this.loadHistory());
     if (this._usingHistory) this.loadHistory();
     else this._messages = this._assistantPrompt ? [...initMessages] : [];
 
+    print("initMessages:", initMessages);
+    print("intilized");
     this.emit("initialized");
   }
 
@@ -287,7 +283,7 @@ export class ClaudeService extends GObject.Object {
   set key(keyValue) {
     this._key = keyValue;
     writeFileAsync(this._key, KEY_FILE)
-      .then(() => this.emit("hasKey", true))
+      .then(() => this.emit("has-key", true))
       .catch(print);
   }
 
@@ -337,8 +333,8 @@ export class ClaudeService extends GObject.Object {
     exec(`bash -c 'mkdir -p ${HISTORY_DIR} && touch ${HISTORY_PATH}'`);
     writeFile(
       JSON.stringify(
-        this._messages.map((msg: Message) => {
-          let m = { role: msg.role, parts: msg.parts };
+        this._messages.map((msg: ServiceMessage) => {
+          let m = { role: msg.role, content: msg.parts };
           return m;
         }),
       ),
@@ -353,20 +349,24 @@ export class ClaudeService extends GObject.Object {
   }
 
   appendHistory() {
-    if (fileExists(HISTORY_PATH)) {
-      const readfile = readFile(HISTORY_PATH);
-      JSON.parse(readfile).forEach((element: Message) => {
-        // this._messages.push(element);
-        this.addMessage(element.role, element.parts[0].text);
-      });
-      // console.log(this._messages)
-      // this._messages = this._messages.concat(JSON.parse(readfile));
-      // for (let index = 0; index < this._messages.length; index++) {
-      //     this.emit('newMsg', index);
-      // }
-    } else {
+    try {
+      if (fileExists(HISTORY_PATH)) {
+        const readfile = readFile(HISTORY_PATH);
+        JSON.parse(readfile).forEach((element: ServiceMessage) => {
+          // this._messages.push(element);
+          this.addMessage(element.role, element.parts[0].text);
+        });
+      }
+    } catch (e) {
+      print(e);
+    } finally {
       this._messages = this._assistantPrompt ? [...initMessages] : [];
     }
+    // console.log(this._messages)
+    // this._messages = this._messages.concat(JSON.parse(readfile));
+    // for (let index = 0; index < this._messages.length; index++) {
+    //     this.emit('newMsg', index);
+    // }
   }
 
   @signal()
@@ -385,29 +385,65 @@ export class ClaudeService extends GObject.Object {
     else this._messages = [];
   }
 
-  readResponse(stream, aiResponse: AnthropicStreamingEvent) {
-    stream.read_line_async(0, null, (stream, res) => {
-      try {
-        const [bytes] = stream.read_line_finish(res);
-        const line = this._decoder.decode(bytes);
-        // console.log(line);
-        if (line == "[{") {
-          // beginning of response
-          aiResponse._rawData += "{";
-          // this._isThinking = false;
-        } else if (line == ",\u000d" || line == "]") {
-          // end of stream pulse
-          aiResponse.parseSection();
-        } // Normal content
-        else aiResponse._rawData += line;
+  readResponse(stream: Gio.DataInputStream, aiResponse: ClaudeMessage) {
+    let eventData = "";
+    let eventType = EventType.ERROR;
 
-        this.readResponse(stream, aiResponse);
-      } catch {
-        aiResponse.done = true;
-        if (this._usingHistory) this.saveHistory();
-        return;
-      }
-    });
+    const readNextLine = () => {
+      stream.read_line_async(0, null, (stream, res) => {
+        try {
+          if (!stream) {
+            print("Stream ended");
+            return;
+          }
+
+          const [bytes] = stream.read_line_finish(res);
+
+          if (!bytes) {
+            // aiResponse.done = true;
+            return;
+          }
+
+          print("attempting line decode");
+          const line = this._decoder.decode(bytes);
+          console.log("decoded", line);
+
+          if (line.startsWith("event: ")) {
+            eventType = line.slice(7) as EventType;
+          } else if (line.startsWith("data: ")) {
+            eventData = line.slice(6);
+
+            if (eventData && eventType === EventType.CONTENT_BLOCK_DELTA) {
+              try {
+                const data = JSON.parse(eventData) as ContentBlockDelta;
+                if ((data.delta.type = DeltaType.TEXT_DELTA)) {
+                  const delta = (data.delta as TextDelta)?.text || "";
+                  aiResponse.addDelta(delta);
+                }
+              } catch (e) {
+                print("Failed to parse event data:", e);
+              }
+            }
+          } else if (line === "") {
+            // Empty line indicates end of event
+            eventType = EventType.ERROR;
+            eventData = "";
+          }
+
+          readNextLine();
+        } catch (e) {
+          print("Error reading ", (e as Error).message);
+          // if (this._usingHistory) this.saveHistory();
+          //   return;
+        } finally {
+          if ((eventType = EventType.MESSAGE_STOP)) {
+            aiResponse.done = true;
+          }
+          print("This line is done being read");
+        }
+      });
+    };
+    readNextLine();
   }
 
   isKeySet() {
@@ -416,45 +452,51 @@ export class ClaudeService extends GObject.Object {
 
   addMessage(role: string, message: string) {
     this._messages.push(new ClaudeMessage(role, message, false));
-    this.emit("newMsg", this._messages.length - 1);
+    this.emit("new-msg", this._messages.length - 1);
   }
 
   send(msg: string) {
     this._messages.push(new ClaudeMessage("user", msg, false));
-    this.emit("newMsg", this._messages.length - 1);
-    const aiResponse = new ClaudeMessage("model", "thinking...", true, false);
+    this.emit("new-msg", this._messages.length - 1);
+    const aiResponse = new ClaudeMessage(
+      Role.ASSISTANT,
+      "thinking...",
+      true,
+      false,
+    );
 
     const body = {
       model: this.modelName,
       messages: this._messages.map((msg) => {
-        let m = { role: msg.role, parts: msg.parts };
+        let m = { role: msg.role, content: msg.parts };
         return m;
       }),
       max_tokens: 1024,
       stream: true,
     };
 
-    const proxyResolver = new Gio.SimpleProxyResolver({
-      defaultProxy: config.ai.proxyUrl || undefined,
-    });
+    // TODO: implment this conditionally
+    // const proxyResolver = new Gio.SimpleProxyResolver({
+    //   defaultProxy: config.ai.proxyUrl || undefined,
+    // });
 
-    const requestHeaders = new Soup.MessageHeaders(
-      Soup.MessageHeadersType.REQUEST,
-    );
+    // const requestHeaders = new Soup.MessageHeaders(
+    //   Soup.MessageHeadersType.REQUEST,
+    // );
 
-    requestHeaders.append("Content-Type", "application/json");
-    requestHeaders.append("anthropic-version", "2023-06-01");
-    requestHeaders.append("x-api-key", ENV_KEY || this._key);
-
-    const session = new Soup.Session({ proxyResolver });
+    const session = new Soup.Session();
     const message = new Soup.Message({
       method: "POST",
-      requestHeaders: requestHeaders,
       uri: GLib.Uri.parse(
         `https://api.anthropic.com/v1/messages`,
         GLib.UriFlags.NONE,
       ),
     });
+
+    message.request_headers.append("Content-Type", "application/json");
+    message.request_headers.append("Content-Type", "application/json");
+    message.request_headers.append("anthropic-version", "2023-06-01");
+    message.request_headers.append("x-api-key", ENV_KEY || this._key);
 
     message.set_request_body_from_bytes(
       "application/json",
@@ -473,7 +515,7 @@ export class ClaudeService extends GObject.Object {
       );
     });
     this._messages.push(aiResponse);
-    this.emit("newMsg", this._messages.length - 1);
+    this.emit("new-msg", this._messages.length - 1);
 
     if (this._cycleModels) {
       this._requestCount++;
@@ -485,4 +527,4 @@ export class ClaudeService extends GObject.Object {
   }
 }
 
-export default new ClaudeService();
+export default ClaudeService;
