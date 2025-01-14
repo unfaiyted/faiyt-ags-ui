@@ -28,15 +28,11 @@ export default function LeftSideBar(sideBarProps: LeftSideBarProps) {
   sidebarTabs.map((tab) => print("Tab name:", tab.name));
 
   return (
-    <SideBar
-      {...props}
-      screenSide={ScreenSide.LEFT}
-      className="sidebar-left spacing-v-10"
-      css="background-color: red;"
-      application={App}
-    >
-      <box vexpand={true} css="min-width: 2px;">
-        <Tabs tabs={sidebarTabs} active={0} />
+    <SideBar {...props} screenSide={ScreenSide.LEFT} application={App}>
+      <box className="sidebar-left spacing-v-10">
+        <box vexpand={true} css="min-width: 2px;">
+          <Tabs tabs={sidebarTabs} active={0} />
+        </box>
       </box>
     </SideBar>
   );

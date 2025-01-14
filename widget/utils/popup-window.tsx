@@ -78,6 +78,7 @@ export default ({
       onDraw={handleDraw}
       onKeyPressEvent={handleKeyPress}
       {...props}
+      className={props.className}
     >
       <box setup={boxSetup}>{child}</box>
     </window>

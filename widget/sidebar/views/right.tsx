@@ -34,14 +34,9 @@ export default function RightSideBar(sideBarProps: RighSideBarProps) {
   sidebarTabs.map((tab) => print("Tab name:", tab.name));
 
   return (
-    <SideBar
-      {...props}
-      screenSide={ScreenSide.RIGHT}
-      className="sidebar-right spacing-v-10"
-      css="background-color: red;"
-      application={App}
-    >
-      <box vexpand={true} css="min-width: 2px;">
+    <SideBar {...props} screenSide={ScreenSide.RIGHT} application={App}>
+      <box className="sidebar-right spacing-v-10">
+        <box vexpand={true} css="min-width: 2px;"></box>
         {/* Toggles? */}
         <Tabs tabs={sidebarTabs} active={0} />
         {/* <PhosphorIcon icon={PhosphorIcons.acorn} size={32} /> */}

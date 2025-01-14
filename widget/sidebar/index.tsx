@@ -49,6 +49,7 @@ export default function SideBar(sideBarProps: SideBarProps) {
   return (
     <PopupWindow
       name={name}
+      className={props.className}
       layer={layer}
       visible={bind(isVisible).as((v) => v)}
       keymode={keymode}

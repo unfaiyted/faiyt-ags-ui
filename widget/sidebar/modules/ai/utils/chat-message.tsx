@@ -4,6 +4,7 @@ import ChatCodeBlock from "./chat-code-block";
 import ChatMessageContent from "./chat-message-content";
 import { ClaudeMessage } from "../../../../../services/claude";
 // import {ChatMessage} from "./"
+import { Variable, bind } from "astal";
 
 // const LATEX_DIR = `${GLib.get_user_cache_dir()}/ags/media/latex`;
 // const CUSTOM_SOURCEVIEW_SCHEME_PATH = `${App.configDir}/assets/themes/sourceviewtheme${darkMode.value ? '' : '-light'}.xml`;
@@ -27,8 +28,13 @@ const TextSkeleton = (extraClassName = "") => (
   <box className={`sidebar-chat-message-skeletonline ${extraClassName}`} />
 );
 
-const ChatMessageLoadingSkeleton = () => (
+export interface LoadingSkeletonProps extends Widget.BoxProps {
+  name: string;
+}
+const ChatMessageLoadingSkeleton = (props: LoadingSkeletonProps) => (
   <box
+    {...props}
+    name={props.name}
     vertical
     className="spacing-v-5"
     children={Array.from({ length: 3 }, (_, id) =>
@@ -38,14 +44,40 @@ const ChatMessageLoadingSkeleton = () => (
 );
 
 export interface ChatMessageProps extends Widget.BoxProps {
-  commandName: string;
   message: ClaudeMessage;
   modelName: string;
 }
 
 export const ChatMessage = (props: ChatMessageProps) => {
+  print("ChatMESSAGE created");
   const { message } = props;
 
+  const displayMessage = Variable("Thinking...");
+  const thinking = Variable(message.role == "user" ? false : message.thinking);
+  // ClaudeMessage.
+  //
+  //
+  // message.connect("notify", (message, pspec) => {
+  //   print("notify:", pspec);
+  //   displayMessage.set(message.content);
+  // });
+  //
+  message.connect("delta", (delta: ClaudeMessage) => {
+    print("delta-content:", delta.content);
+
+    displayMessage.set(delta.content);
+  });
+
+  message.connect("finished", (message: ClaudeMessage) => {
+    // print("message", message);
+    print("finished-content:", message.content);
+    thinking.set(false);
+    displayMessage.set(message.content);
+  });
+
+  print("Setting message.content", message.content);
+  print("thinking:", thinking.get());
+  displayMessage.set(message.content);
   return (
     <box className="sidebar-chat-message">
       <box vertical>
@@ -57,12 +89,11 @@ export const ChatMessage = (props: ChatMessageProps) => {
           className={`txt txt-bold sidebar-chat-name sidebar-chat-name-${message.role == "user" ? "user" : "bot"}`}
         />
         <box homogeneous className="sidebar-chat-messagearea">
-          <stack shown={message.thinking ? "thinking" : "message"}>
+          <stack shown={bind(thinking).as((v) => (v ? "thinking" : "message"))}>
             <ChatMessageLoadingSkeleton name="thinking" />
             <ChatMessageContent
               name="message"
-              content={props.message.content}
-              {...props}
+              content={bind(displayMessage).as((v) => v)}
             />
           </stack>
         </box>
@@ -70,3 +101,5 @@ export const ChatMessage = (props: ChatMessageProps) => {
     </box>
   );
 };
+
+export default ChatMessage;

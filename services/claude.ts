@@ -7,7 +7,6 @@ import { readFile, writeFile, writeFileAsync } from "astal/file";
 import { execAsync, exec } from "astal/process";
 import config from "../utils/config";
 import {
-  AnthropicStreamingEvent,
   EventType,
   ContentBlockDelta,
   TextDelta,
@@ -48,7 +47,7 @@ function replaceapidom(URL: string) {
 
 @register()
 export class ClaudeMessage extends GObject.Object {
-  private _role = "";
+  private _role: Role = Role.USER;
   private _parts = [{ type: "text", text: "" }];
   private_parts = [{ type: "text", text: "" }];
   private _isThinking = true;
@@ -59,7 +58,7 @@ export class ClaudeMessage extends GObject.Object {
   @signal(String) declare delta: (_delta: string) => void;
 
   constructor(
-    initialRole: string,
+    initialRole: Role,
     initialContent: string,
     thinking = true,
     done = false,
@@ -69,6 +68,14 @@ export class ClaudeMessage extends GObject.Object {
     this._parts = [{ type: "text", text: initialContent }];
     this._isThinking = thinking;
     this._isDone = done;
+    if (initialRole == Role.USER) {
+      print("initialRole", initialRole);
+      this.done = true;
+      this._isDone = true;
+      this.emit("changed");
+      this.emit("delta", initialContent);
+      this.emit("finished", this);
+    }
   }
 
   get rawData() {
@@ -78,6 +85,13 @@ export class ClaudeMessage extends GObject.Object {
   @signal()
   changed() {
     print("ClaudeMessage changed");
+  }
+
+  @signal(ClaudeMessage)
+  finished(_message: ClaudeMessage) {
+    print("ClaudeMessage finished");
+    _message._isDone = true;
+    _message._isThinking = false;
   }
 
   set rawData(value) {
@@ -342,6 +356,10 @@ export class ClaudeService extends GObject.Object {
     );
   }
 
+  getMessage(id: number) {
+    return this._messages[id];
+  }
+
   loadHistory() {
     this._messages = [];
     this.appendHistory();
@@ -404,7 +422,7 @@ export class ClaudeService extends GObject.Object {
             return;
           }
 
-          print("attempting line decode");
+          // print("attempting line decode");
           const line = this._decoder.decode(bytes);
           console.log("decoded", line);
 
@@ -436,10 +454,11 @@ export class ClaudeService extends GObject.Object {
           // if (this._usingHistory) this.saveHistory();
           //   return;
         } finally {
-          if ((eventType = EventType.MESSAGE_STOP)) {
+          if (eventType === EventType.MESSAGE_STOP) {
             aiResponse.done = true;
+            aiResponse.emit("finished", aiResponse);
           }
-          print("This line is done being read");
+          // print("This line is done being read");
         }
       });
     };
@@ -450,13 +469,14 @@ export class ClaudeService extends GObject.Object {
     return this._key.length > 0;
   }
 
-  addMessage(role: string, message: string) {
+  addMessage(role: Role, message: string) {
     this._messages.push(new ClaudeMessage(role, message, false));
     this.emit("new-msg", this._messages.length - 1);
   }
 
   send(msg: string) {
-    this._messages.push(new ClaudeMessage("user", msg, false));
+    print("msg:", msg);
+    this._messages.push(new ClaudeMessage(Role.USER, msg, false, true));
     this.emit("new-msg", this._messages.length - 1);
     const aiResponse = new ClaudeMessage(
       Role.ASSISTANT,

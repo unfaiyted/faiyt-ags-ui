@@ -47,7 +47,7 @@ export type ContentBlockDelta = {
 };
 
 export interface ServiceMessage {
-  role: string;
+  role: Role;
   parts: Array<{ text: string }>;
 }
 

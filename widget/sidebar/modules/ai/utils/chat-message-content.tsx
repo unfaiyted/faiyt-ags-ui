@@ -3,9 +3,10 @@ import { ChatCodeBlock } from "./chat-code-block";
 import config from "../../../../../utils/config";
 import { ClaudeMessage } from "../../../../../services/claude";
 import GtkSource from "gi://GtkSource?version=4";
+import { Binding } from "astal";
 
 export interface MessageContentProps extends Widget.BoxProps {
-  content: string;
+  content: string | Binding<string>;
 }
 
 const Divider = () =>
@@ -30,6 +31,7 @@ const TextBlock = (content = "") =>
 
 export const ChatMessageContent = (props: MessageContentProps) => {
   const contentBox = new Widget.Box({
+    ...props,
     className: "sidebar-chat-message-content",
   });
 
@@ -38,6 +40,7 @@ export const ChatMessageContent = (props: MessageContentProps) => {
   };
 
   const update = (content: string, useCursor = false) => {
+    print("update called with:", content);
     // Clear and add first text widget
     const children = contentBox.children;
     for (let i = 0; i < children.length; i++) {
@@ -117,6 +120,11 @@ export const ChatMessageContent = (props: MessageContentProps) => {
     contentBox.show_all();
   };
   // contentBox.attribute.fullUpdate(contentBox, content, false);
+  if (props.content instanceof Binding) {
+    print("Binding content subscribed");
+    props.content.subscribe(update);
+    update(props.content.get());
+  } else update(props.content);
   return contentBox;
 };
 
