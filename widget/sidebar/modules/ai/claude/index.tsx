@@ -164,7 +164,6 @@ export default function ClaudeAI(props: ClaudeAIProps) {
         <box className="spacing-v-10" vertical>
           {/*   <ChatContent content={} /> */}
           {bind(chatContent).as((v) => {
-            // console.log("Chat Content:", v);
             return v.map(([num, w]) => w);
           })}
         </box>

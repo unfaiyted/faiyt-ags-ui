@@ -20,9 +20,10 @@ export default function RightSideBar(sideBarProps: RighSideBarProps) {
   const { setup, child, ...props } = sideBarProps;
 
   const enabledTabs = [
-    SidebarModule.bluetooth,
-    SidebarModule.config,
-    SidebarModule.wifi,
+    SidebarModule.NOTIFICATIONS,
+    SidebarModule.AUDIO,
+    SidebarModule.BLUETOOTH,
+    SidebarModule.WIFI,
   ];
 
   const sidebarTabs = getSidebarTabs().filter((tab) =>

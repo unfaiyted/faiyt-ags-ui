@@ -26,7 +26,7 @@ export const ChatInput = (props: ChatEntryProps) => {
   };
 
   const handleDraw = (self: Widget.Entry) => {
-    if (!hasFocused.get()) {
+    if (!hasFocused.get() && props.autoFocus) {
       self.grab_focus();
       hasFocused.set(true);
     }

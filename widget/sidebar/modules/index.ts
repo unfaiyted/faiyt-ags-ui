@@ -11,36 +11,48 @@ import { PhosphorIcons } from "../../utils/icons/types";
 import { TabContent } from "../../utils/containers/tabs";
 
 export enum SidebarModule {
-  ais = "ais",
-  tools = "tools",
-  bluetooth = "bluetooth",
-  wifi = "wifi",
-  config = "config",
+  AIS = "ais",
+  TOOLS = "tools",
+  AUDIO = "audio",
+  BLUETOOTH = "bluetooth",
+  WIFI = "wifi",
+  CONFIG = "config",
+  NOTIFICATIONS = "notifications",
 }
 
 export const SIDEBAR_MODULES: Record<string, TabContent> = {
-  [SidebarModule.ais]: {
-    name: SidebarModule.ais,
+  [SidebarModule.AIS]: {
+    name: SidebarModule.AIS,
     content: AITab,
     icon: PhosphorIcons["open-ai-logo"],
   },
-  [SidebarModule.tools]: {
-    name: SidebarModule.tools,
+  [SidebarModule.NOTIFICATIONS]: {
+    name: SidebarModule.NOTIFICATIONS,
+    content: Notifications,
+    icon: PhosphorIcons["bell"],
+  },
+  [SidebarModule.AUDIO]: {
+    name: SidebarModule.AUDIO,
+    content: Audio,
+    icon: PhosphorIcons["bell"],
+  },
+  [SidebarModule.TOOLS]: {
+    name: SidebarModule.TOOLS,
     content: Tools,
     icon: PhosphorIcons["toolbox"],
   },
-  [SidebarModule.bluetooth]: {
-    name: SidebarModule.bluetooth,
+  [SidebarModule.BLUETOOTH]: {
+    name: SidebarModule.BLUETOOTH,
     content: Bluetooth,
     icon: PhosphorIcons["bluetooth"],
   },
-  [SidebarModule.wifi]: {
-    name: SidebarModule.wifi,
+  [SidebarModule.WIFI]: {
+    name: SidebarModule.WIFI,
     content: Wifi,
     icon: PhosphorIcons["wifi-medium"],
   },
-  [SidebarModule.config]: {
-    name: SidebarModule.config,
+  [SidebarModule.CONFIG]: {
+    name: SidebarModule.CONFIG,
     content: Configuration,
     icon: PhosphorIcons["gear"],
   },

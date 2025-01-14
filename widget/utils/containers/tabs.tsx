@@ -13,6 +13,7 @@ export interface TabContent {
 export interface TabContainerProps extends Widget.BoxProps {
   active: number;
   hideLabels?: boolean;
+  showActiveLabel?: boolean;
   orientation?: Gtk.Orientation;
   tabs: TabContent[];
 }

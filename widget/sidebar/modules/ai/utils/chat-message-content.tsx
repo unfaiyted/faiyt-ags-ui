@@ -119,7 +119,6 @@ export const ChatMessageContent = (props: MessageContentProps) => {
     // }))
     contentBox.show_all();
   };
-  // contentBox.attribute.fullUpdate(contentBox, content, false);
   if (props.content instanceof Binding) {
     print("Binding content subscribed");
     props.content.subscribe(update);
