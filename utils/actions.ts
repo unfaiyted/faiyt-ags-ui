@@ -1,11 +1,22 @@
 import { execAsync } from "astal/process";
+import config from "./config";
 import Wp from "gi://AstalWp";
+import Network from "gi://AstalNetwork";
+
+const network = Network.get_default();
 
 const wp = Wp.get_default();
 
 const audio = wp ? wp.audio : undefined;
 
 export const actions = {
+  ui: {
+    reload: () =>
+      execAsync(["bash", "-c", "hyprctl reload || swaymsg reload &"]),
+    reloadAgs: () => {
+      // execAsync(["bash", "-c", "ags-reload-ui || ags-reload-ui &"]);
+    },
+  },
   music: {
     toggle: () => execAsync("playerctl play-pause").catch(print),
     next: () =>
@@ -19,11 +30,17 @@ export const actions = {
     play: () => execAsync("playerctl play").catch(print),
   },
   network: {
+    toggleWifi: () =>
+      network.get_wifi()?.set_enabled(!network.get_wifi()?.get_enabled()),
     ipInfo: () => execAsync("curl ipinfo.io"), // returns JSON with ip info and location
     ipCityInfo: () =>
       execAsync("curl ipinfo.io").then((output) =>
         JSON.parse(output)["city"].toLowerCase(),
       ),
+  },
+  bluetooth: {
+    disable: () => execAsync("rfkill block bluetooth").catch(print),
+    enable: () => execAsync("rfkill unblock bluetooth").catch(print),
   },
   brightness: {
     // TODO: implement brightness control
@@ -70,6 +87,11 @@ export const actions = {
     },
   },
   app: {
+    bluetooth: () =>
+      execAsync(["bash", "-c", `${config.apps.bluetooth}`]).catch(print),
+    settings: () => execAsync(["bash", "-c", `${config.apps.settings}`, "&"]),
+    wifi: () =>
+      execAsync(["bash", "-c", `${config.apps.network}`]).catch(print),
     screenSnip: () => {
       // execAsync(`${App.configDir}/scripts/grimblast.sh copy area`)
     },

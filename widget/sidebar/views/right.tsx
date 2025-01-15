@@ -8,6 +8,7 @@ import Tabs from "../../utils/containers/tabs";
 import { getSidebarTabByName } from "../modules";
 import { bind } from "astal";
 import { Variable } from "astal";
+import QuickToggles from "../modules/toggles";
 import { PopupWindowProps } from "../../utils/popup-window";
 import { SIDEBAR_MODULES, SidebarModule } from "../modules";
 
@@ -36,22 +37,14 @@ export default function RightSideBar(sideBarProps: RighSideBarProps) {
 
   return (
     <SideBar {...props} screenSide={ScreenSide.RIGHT} application={App}>
-      <box className="sidebar-right spacing-v-10">
-        <box vexpand={true} css="min-width: 2px;"></box>
-        {/* Toggles? */}
-        <Tabs tabs={sidebarTabs} active={0} />
-        {/* <PhosphorIcon icon={PhosphorIcons.acorn} size={32} /> */}
-        {/* <PhosphorIcon icon={PhosphorIcons.airplane} size={32} /> */}
-        {/* <PhosphorIcon */}
-        {/*   icon={PhosphorIcons.airplane} */}
-        {/*   weight={PhosphorWeight.BOLD} */}
-        {/*   size={32} */}
-        {/* /> */}
-        {/* <icon */}
-        {/*   file="./assets/icons/ai-zukijourney.png" */}
-        {/*   css={``} */}
-        {/*   pixel_size={32} */}
-        {/* /> */}
+      <box className="sidebar-right spacing-v-15" vertical vexpand>
+        <box vertical className="spacing-v-5">
+          {/* <TimeRow /> */}
+          <QuickToggles />
+        </box>
+        <box className="sidebar-group">
+          <Tabs tabs={sidebarTabs} active={0} />
+        </box>
       </box>
     </SideBar>
   );

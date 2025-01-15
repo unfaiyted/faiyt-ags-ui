@@ -1,10 +1,11 @@
 import Cairo from "gi://cairo";
 import { Astal, Gdk } from "astal/gtk3";
 import GLib from "gi://GLib";
+import config from "./config";
 
 export const dummyRegion = new Cairo.Region();
 
-export const enableClickthrough = (self) =>
+export const enableClickthrough = (self: any) =>
   self.input_shape_combine_region(dummyRegion);
 
 //this is because direction does not seem to work in event.direction
@@ -41,4 +42,22 @@ export const parseCommand = (
   const args = parts.slice(1).join(" ");
 
   return { command, args };
+};
+
+export const getFriendlyTimeString = (timeObject: number) => {
+  const messageTime = GLib.DateTime.new_from_unix_local(timeObject);
+  const oneMinuteAgo = GLib.DateTime.new_now_local().add_seconds(-60);
+  if (oneMinuteAgo != null && messageTime.compare(oneMinuteAgo) > 0)
+    return "Now";
+  else if (
+    messageTime.get_day_of_year() ==
+    GLib.DateTime.new_now_local().get_day_of_year()
+  )
+    return messageTime.format(config.time.format);
+  else if (
+    messageTime.get_day_of_year() ==
+    GLib.DateTime.new_now_local().get_day_of_year() - 1
+  )
+    return "Yesterday";
+  else return messageTime.format(config.time.dateFormat);
 };

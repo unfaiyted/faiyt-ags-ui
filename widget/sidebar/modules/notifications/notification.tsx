@@ -5,6 +5,7 @@ import { Variable } from "astal";
 import MaterialIcon from "../../../utils/icons/material";
 import Notifd from "gi://AstalNotifd";
 import config from "../../../../utils/config";
+import { getFriendlyTimeString } from "../../../../utils";
 
 export interface NotificationProps extends Widget.RevealerProps {
   notification: Notifd.Notification;
@@ -23,24 +24,6 @@ export interface NotificationExpandProps extends Widget.BoxProps {
   notification: Notifd.Notification;
 }
 
-const getFriendlyNotifTimeString = (timeObject: number) => {
-  const messageTime = GLib.DateTime.new_from_unix_local(timeObject);
-  const oneMinuteAgo = GLib.DateTime.new_now_local().add_seconds(-60);
-  if (oneMinuteAgo != null && messageTime.compare(oneMinuteAgo) > 0)
-    return "Now";
-  else if (
-    messageTime.get_day_of_year() ==
-    GLib.DateTime.new_now_local().get_day_of_year()
-  )
-    return messageTime.format(config.time.format);
-  else if (
-    messageTime.get_day_of_year() ==
-    GLib.DateTime.new_now_local().get_day_of_year() - 1
-  )
-    return "Yesterday";
-  else return messageTime.format(config.time.dateFormat);
-};
-
 export const NotificationIcon = (props: NotificationIconProps) => {
   return (
     <box valign={Gtk.Align.START} homogeneous>
@@ -57,7 +40,7 @@ export const NotificationIcon = (props: NotificationIconProps) => {
 
 export const NotificationText = (props: NotificationTextProps) => {
   const NotifyTextSummary = () => {
-    const time = getFriendlyNotifTimeString(props.notification.time);
+    const time = getFriendlyTimeString(props.notification.time);
 
     return (
       <label
@@ -110,7 +93,7 @@ export default function Notification(props: NotificationProps) {
   const id = props.notification.id;
   const notification = props.notification;
 
-  notification.dismiss();
+  // notification.dismiss();
 
   return (
     <revealer
