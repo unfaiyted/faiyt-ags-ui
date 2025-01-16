@@ -7,11 +7,11 @@ import { Variable, bind, Binding } from "astal";
 import { NetworkIndicator } from "./indicators";
 import { NetworkToggle } from "./network";
 import BluetoothToggle from "./bluetooth";
-const network = Network.get_default();
+import IdleInhibitorToggle from "./idle-inhibitor";
 
 export interface TogglesModuleProps extends Widget.ButtonProps {
-  handleClick: () => void;
-  handleRightClick: () => void;
+  handleClick: (self: Widget.Button) => void;
+  handleRightClick: (self: Widget.Button) => void;
   indicator: (props: Widget.StackProps) => Gtk.Widget;
   active: Binding<boolean>;
 }
@@ -19,9 +19,9 @@ export interface TogglesModuleProps extends Widget.ButtonProps {
 export const ToggleIcon = (props: TogglesModuleProps) => {
   const handleClick = (self: Widget.Button, event: Astal.ClickEvent) => {
     if (event.button === Astal.MouseButton.PRIMARY) {
-      props.handleClick();
+      props.handleClick(self);
     } else if (event.button === Astal.MouseButton.SECONDARY) {
-      props.handleRightClick();
+      props.handleRightClick(self);
     }
   };
 
@@ -59,7 +59,9 @@ export default function QuickToggles(props: Widget.BoxProps) {
       <NetworkToggle />
       <BluetoothToggle />
       <NetworkToggle />
-      <BluetoothToggle />
+      <IdleInhibitorToggle />
+      {/* <BluetoothToggle /> */}
+      {/* <IdleInhibitorToggle /> */}
     </box>
   );
 }

@@ -11,6 +11,7 @@ import { Variable } from "astal";
 import QuickToggles from "../modules/toggles";
 import { PopupWindowProps } from "../../utils/popup-window";
 import { SIDEBAR_MODULES, SidebarModule } from "../modules";
+import HeaderModule from "../modules/header";
 
 interface RighSideBarProps extends PopupWindowProps {
   screenSide?: ScreenSide.RIGHT;
@@ -39,7 +40,7 @@ export default function RightSideBar(sideBarProps: RighSideBarProps) {
     <SideBar {...props} screenSide={ScreenSide.RIGHT} application={App}>
       <box className="sidebar-right spacing-v-15" vertical vexpand>
         <box vertical className="spacing-v-5">
-          {/* <TimeRow /> */}
+          <HeaderModule />
           <QuickToggles />
         </box>
         <box className="sidebar-group">

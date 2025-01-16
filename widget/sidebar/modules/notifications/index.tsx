@@ -43,7 +43,9 @@ export const NotificationCount = (props: NotificationCountProps) => {
       hexpand
       xalign={0}
       className="txt-small margin-left-10"
-      label={bind(count).as((v) => v.toString())}
+      label={bind(count).as(
+        (v) => v.toString() + (v == 1 ? " notification" : " notifications"),
+      )}
     />
   );
 };

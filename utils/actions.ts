@@ -1,4 +1,4 @@
-import { execAsync } from "astal/process";
+import { exec, execAsync } from "astal/process";
 import config from "./config";
 import Wp from "gi://AstalWp";
 import Network from "gi://AstalNetwork";
@@ -54,6 +54,22 @@ export const actions = {
       // decrease: () => execAsync("light -U 5").catch(print),
     },
   },
+  system: {
+    reload: () =>
+      execAsync(["bash", "-c", "hyprctl reload || swaymsg reload &"]),
+    has: (command: string) => !!exec(`bash -c 'command -v ${command}'`),
+    distroID: () =>
+      exec(
+        `bash -c 'cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2 | sed "s/\\"//g"'`,
+      ).trim(),
+    idleInhibitor: {
+      // TODO: Look into why this doesn't work acording to the old docs
+      // start: execAsync(['bash', '-c', `pidof wayland-idle-inhibitor.py || ${App.configDir}/scripts/wayland-idle-inhibitor.py`]).catch(print)
+      // stop: execAsync('pkill -f wayland-idle-inhibitor.py').catch(print);
+      start: () => execAsync("hyprctl idle inhibit"),
+      stop: () => execAsync("hyprctl idle uninhibit"),
+    },
+  },
   audio: {
     increase: () => {
       if (!audio || !audio.default_speaker) return;
@@ -83,6 +99,20 @@ export const actions = {
         "bash",
         "-c",
         `ags request "window toggle ${windowName}"`,
+      ]).catch(print);
+    },
+    open: (windowName: string) => {
+      execAsync([
+        "bash",
+        "-c",
+        `ags request "window open ${windowName}"`,
+      ]).catch(print);
+    },
+    close: (windowName: string) => {
+      execAsync([
+        "bash",
+        "-c",
+        `ags request "window close ${windowName}"`,
       ]).catch(print);
     },
   },
