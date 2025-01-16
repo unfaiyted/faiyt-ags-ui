@@ -5,7 +5,8 @@ import { setupCursorHover } from "../../../utils/buttons";
 import Network from "gi://AstalNetwork";
 import { Variable, bind, Binding } from "astal";
 import { NetworkIndicator } from "./indicators";
-
+import { NetworkToggle } from "./network";
+import BluetoothToggle from "./bluetooth";
 const network = Network.get_default();
 
 export interface TogglesModuleProps extends Widget.ButtonProps {
@@ -30,6 +31,10 @@ export const ToggleIcon = (props: TogglesModuleProps) => {
     props.active.subscribe((active) => {
       self.toggleClassName("sidebar-button-active", active);
     });
+
+    if (props.active.get()) {
+      self.toggleClassName("sidebar-button-active", props.active.get());
+    }
   };
 
   return (
@@ -44,26 +49,6 @@ export const ToggleIcon = (props: TogglesModuleProps) => {
   );
 };
 
-export const ToggleWifi = (props: Widget.ButtonProps) => {
-  const network = Network.get_default();
-  const isEnabled = Variable(network.get_wifi()?.get_enabled() ?? false);
-  const tooltipText = Variable("Wifi | Right-Click to configure");
-
-  network.connect("notify", (_network) => {
-    isEnabled.set(_network.get_wifi()?.get_enabled() ?? false);
-  });
-
-  return (
-    <ToggleIcon
-      tooltipText={bind(tooltipText)}
-      handleClick={actions.network.toggleWifi}
-      handleRightClick={actions.app.wifi}
-      indicator={NetworkIndicator}
-      active={bind(isEnabled)}
-    />
-  );
-};
-
 export default function QuickToggles(props: Widget.BoxProps) {
   return (
     <box
@@ -71,10 +56,10 @@ export default function QuickToggles(props: Widget.BoxProps) {
       className="sidebar-togglesbox spacing-h-5"
       {...props}
     >
-      <ToggleWifi />
-      <ToggleWifi />
-      <ToggleWifi />
-      <ToggleWifi />
+      <NetworkToggle />
+      <BluetoothToggle />
+      <NetworkToggle />
+      <BluetoothToggle />
     </box>
   );
 }

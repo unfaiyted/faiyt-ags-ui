@@ -3,25 +3,42 @@ import { ClickButtonPressed } from "../../../../types";
 import { actions } from "../../../../utils/actions";
 import { setupCursorHover } from "../../../utils/buttons";
 import Network from "gi://AstalNetwork";
+import Bluetooth from "gi://AstalBluetooth";
 import { Variable, bind, Binding } from "astal";
 import config from "../../../../utils/config";
 
 const network = Network.get_default();
+const bt = Bluetooth.get_default();
 
-// const SimpleNetworkIndicator = () =>
-//   Widget.Icon({
-//     setup: (self) =>
-//       self.hook(Network, (self) => {
-//         const icon = Network[Network.primary || "wifi"]?.iconName;
-//         self.icon = icon || "";
-//         self.visible = icon;
-//       }),
-//   });
-//
+export const BluetoothIndicator = () => {
+  const shown = Variable("disabled");
+
+  bt.connect("notify", (_bt: Bluetooth.Bluetooth) => {
+    shown.set(_bt.isPowered ? "enabled" : "disabled");
+  });
+
+  return (
+    <stack
+      transitionType={Gtk.StackTransitionType.SLIDE_UP_DOWN}
+      transitionDuration={config.animations.durationSmall}
+      shown={bind(shown)}
+    >
+      <label
+        name="enabled"
+        className="txt-norm icon-material"
+        label="bluetooth"
+      />
+      <label
+        name="disabled"
+        className="txt-norm icon-material"
+        label="bluetooth_disabled"
+      />
+    </stack>
+  );
+};
 
 export const SimpleNetworkIndicator = (props: Widget.LabelProps) => {
   const icon = network.primary == Network.Primary.WIFI ? "wifi" : "lan";
-
   return <icon icon={icon} visible />;
 };
 
