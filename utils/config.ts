@@ -4,6 +4,7 @@ import userConfigOptions from "../user-options.js";
 import { ConfigOptions, MergedConfig } from "../types/config";
 import { BarMode } from "../widget/bar/types";
 
+const USERNAME = GLib.get_user_name();
 // Default options.
 // Add overrides in /config
 let defaultConfigOptions: ConfigOptions = {
@@ -242,6 +243,7 @@ let defaultConfigOptions: ConfigOptions = {
     default: BarMode.Normal,
   },
   dir: {
+    scripts: `/home/${USERNAME}/codebase/faiyt-ags-ui/scripts`,
     home: GLib.get_home_dir(),
     cache: GLib.get_user_cache_dir(),
     config: GLib.get_user_config_dir(),

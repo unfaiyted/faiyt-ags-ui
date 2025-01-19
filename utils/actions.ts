@@ -1,3 +1,4 @@
+import { App, Gdk } from "astal/gtk3";
 import { exec, execAsync } from "astal/process";
 import config from "./config";
 import Wp from "gi://AstalWp";
@@ -11,8 +12,8 @@ const audio = wp ? wp.audio : undefined;
 
 export const actions = {
   ui: {
-    reload: () =>
-      execAsync(["bash", "-c", "hyprctl reload || swaymsg reload &"]),
+    // reload: () =>
+    // execAsync(["bash", "-c", "hyprctl reload || swaymsg reload &"]),
     reloadAgs: () => {
       // execAsync(["bash", "-c", "ags-reload-ui || ags-reload-ui &"]);
     },
@@ -123,10 +124,11 @@ export const actions = {
     wifi: () =>
       execAsync(["bash", "-c", `${config.apps.network}`]).catch(print),
     screenSnip: () => {
-      // execAsync(`${App.configDir}/scripts/grimblast.sh copy area`)
+      execAsync(`${config.dir.scripts}/grimblast.sh copy area`);
+      // TODO: can we have a notification here? Showing or at least saying that it was copied to clipboard?
     },
     colorPicker: () => {
-      // execAsync(`${App.configDir}/scripts/color_generation/switchwall.sh`)
+      execAsync(`${config.dir.scripts}/color_generation/switchwall.sh`);
     },
   },
 };

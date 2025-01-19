@@ -1,4 +1,6 @@
-These fonts will need to be installed on the system
+## These fonts will need to be installed on the system
+
+#### TODO: nerd font links
 
 ```css
 @mixin titlefont {
@@ -48,3 +50,14 @@ These fonts will need to be installed on the system
     color: colors.$subtext;
 }
 ```
+
+## Default Configuration
+
+**Required:**
+
+- Hyprland
+- Ags/Astal
+
+**Optional:**
+
+- Grimblast (screenshots) <https://github.com/hyprwm/contrib/tree/main/grimblast>

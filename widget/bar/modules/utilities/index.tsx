@@ -37,7 +37,7 @@ export default function UtilitiesModules(props: UtilitiesModuleProps) {
           <UtilitiesButton
             icon={utility.icon}
             name={utility.name}
-            onClicked={utility.onClicked}
+            onClick={utility.onClicked}
           />
         ))}
       </box>

@@ -226,6 +226,7 @@ export interface BarConfig {
 }
 
 export interface DirConfig {
+  scripts: string;
   home: string;
   cache: string;
   config: string;
