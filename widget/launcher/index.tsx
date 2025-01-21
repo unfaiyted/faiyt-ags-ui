@@ -5,6 +5,7 @@ import CloseRegion from "../utils/containers/close-region";
 import { Variable, bind } from "astal";
 import config from "../../utils/config";
 import actions from "../../utils/actions";
+import LauncherResults from "./launcher-results";
 
 export interface LauncherProps extends PopupWindowProps {
   monitor: number;
@@ -15,20 +16,27 @@ export default function LauncherBar(launcherProps: LauncherProps) {
 
   const isVisible = Variable(true);
   const placeholderText = Variable("Type to Search");
+  const searchText = Variable("");
 
   const handleKeyPress = (self: Widget.Entry, event: Gdk.Event) => {
+    // esc key = reset text value
+    if (event.get_keyval()[1] === Gdk.KEY_Escape) {
+      self.text = "";
+      searchText.set("");
+    }
+
     if (self.text.length == 0) {
       placeholderText.set("Type to Search");
       return;
     }
+
+    searchText.set(self.text);
     placeholderText.set("");
   };
 
-
-  isVisible.subscribe("changed",(v:boolean) => {
-
-  }
-
+  isVisible.subscribe((v) => {
+    if (v) placeholderText.set("Type to Search");
+  });
 
   return (
     <PopupWindow
@@ -99,15 +107,15 @@ export default function LauncherBar(launcherProps: LauncherProps) {
               halign={Gtk.Align.CENTER}
             />
           </box>
-          <CloseRegion
-            hexpand
-            height="50%"
-            multimonitor={true}
-            monitor={props.monitor}
-            handleClose={() => actions.window.close("launcher")}
-          />
+          {/* <CloseRegion */}
+          {/*   hexpand */}
+          {/*   height="50%" */}
+          {/*   multimonitor={true} */}
+          {/*   monitor={props.monitor} */}
+          {/*   handleClose={() => actions.window.close("launcher")} */}
+          {/* /> */}
           {/* <WorkspacesOverview /> */}
-          {/* <SearchResults/> */}
+          <LauncherResults searchText={bind(searchText)} />
         </box>
       </box>
     </PopupWindow>
