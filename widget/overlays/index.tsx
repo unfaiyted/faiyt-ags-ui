@@ -15,13 +15,12 @@ export const SystemOverlays = (props: SystemOverlayProps) => {
       {...props}
       name={`system-overlays-${props.monitor}`}
       monitor={props.monitor}
-      className="indicator"
       layer={Astal.Layer.OVERLAY}
       visible
       anchor={Astal.WindowAnchor.TOP}
     >
       <eventbox onHover={() => {}}>
-        <box vertical className="osd-window" css={"min-height: 2px;"}>
+        <box vertical css={"min-height: 2px;"}>
           <Indicators>
             <BrightnessIndicator />
             <VolumeIndicator />

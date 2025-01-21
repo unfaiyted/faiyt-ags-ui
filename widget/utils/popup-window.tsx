@@ -77,8 +77,8 @@ export default ({
       layer={Astal.Layer.TOP}
       onDraw={handleDraw}
       onKeyPressEvent={handleKeyPress}
-      {...props}
       className={props.className}
+      {...props}
     >
       <box setup={boxSetup}>{child}</box>
     </window>

@@ -1,7 +1,7 @@
 import GLib from "gi://GLib";
 import { deepMerge } from "./objects.js";
 import userConfigOptions from "../user-options.js";
-import { ConfigOptions, MergedConfig } from "../types/config";
+import { ConfigOptions, DisplayModes, MergedConfig } from "../types/config";
 import { BarMode } from "../widget/bar/types";
 
 const USERNAME = GLib.get_user_name();
@@ -24,6 +24,7 @@ let defaultConfigOptions: ConfigOptions = {
     durationLarge: 180,
   },
   appearance: {
+    defaultMode: DisplayModes.DARK,
     autoDarkMode: {
       // Turns on dark mode in certain hours. Time in 24h format
       enabled: false,

@@ -1,5 +1,10 @@
 import { BarMode } from "../widget/bar/types";
 
+export enum DisplayModes {
+  LIGHT = "light",
+  DARK = "dark",
+}
+
 export interface AiConfig {
   defaultGPTProvider: string;
   defaultTemperature: number;
@@ -22,7 +27,10 @@ export interface AutoDarkMode {
   to: string;
 }
 
+export type Time = [hour: number, minute: number];
+
 export interface AppearanceConfig {
+  defaultMode: DisplayModes;
   autoDarkMode: AutoDarkMode;
   keyboardUseFlag: boolean;
   layerSmoke: boolean;

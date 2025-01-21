@@ -175,16 +175,16 @@ $sidebar_chat_textboxareaColor: color.mix(
     @include mixins.element_decel;
     min-width: 0.273rem;
     min-height: 2.045rem;
-    background-color: transparentize(material.$onSurfaceVariant, 0.7);
+    background-color: color.adjust(material.$onSurfaceVariant, $alpha: -0.7);
   }
 
   slider:hover,
   slider:focus {
-    background-color: transparentize(material.$onSurfaceVariant, 0.6);
+    background-color: color.adjust(material.$onSurfaceVariant, $alpha: -0.6);
   }
 
   slider:active {
-    background-color: transparentize(material.$onSurface, 0.5);
+    background-color: color.adjust(material.$onSurface, $alpha: -0.5);
   }
 }
 
@@ -1040,4 +1040,3 @@ $waifu_image_overlay_transparency: 0.7;
     color.adjust($color: colors.$layer1, $alpha: -1) 1.023rem
   );
 }
-

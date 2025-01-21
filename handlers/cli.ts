@@ -106,6 +106,7 @@ function handleWindowCommand(
     case "show":
       window.visible = true;
       break;
+    case "close":
     case "hide":
       window.visible = false;
       break;
