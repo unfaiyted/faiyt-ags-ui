@@ -14,6 +14,21 @@ export default function LauncherBar(launcherProps: LauncherProps) {
   const { setup, child, ...props } = launcherProps;
 
   const isVisible = Variable(true);
+  const placeholderText = Variable("Type to Search");
+
+  const handleKeyPress = (self: Widget.Entry, event: Gdk.Event) => {
+    if (self.text.length == 0) {
+      placeholderText.set("Type to Search");
+      return;
+    }
+    placeholderText.set("");
+  };
+
+
+  isVisible.subscribe("changed",(v:boolean) => {
+
+  }
+
 
   return (
     <PopupWindow
@@ -65,12 +80,14 @@ export default function LauncherBar(launcherProps: LauncherProps) {
                   halign={Gtk.Align.CENTER}
                 >
                   <label className="overview-search-prompt txt-small txt">
-                    Type to Search
+                    {bind(placeholderText)}
                   </label>
                 </revealer>,
               ]}
             >
               <entry
+                setup={(self) => self.grab_focus()}
+                onKeyReleaseEvent={handleKeyPress}
                 className={"overview-search-box txt-small txt"}
                 halign={Gtk.Align.CENTER}
               ></entry>
