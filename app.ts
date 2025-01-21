@@ -8,6 +8,7 @@ import Bar from "./widget/bar";
 import { BarProps, BarMode } from "./widget/bar/types";
 import SideLeft from "./widget/sidebar/views/left";
 import SideRight from "./widget/sidebar/views/right";
+import SystemOverlays from "./widget/overlays";
 import cliRequestHandler from "./handlers/cli";
 import {
   BarCornerTopLeft,
@@ -23,6 +24,10 @@ App.start({
     // Windows
     App.get_monitors().map((gdkmonitor, index, array) =>
       Bar({ gdkmonitor: gdkmonitor, index, mode: BarMode.Normal }),
+    );
+
+    App.get_monitors().map((gdkmonitor, index, array) =>
+      SystemOverlays({ gdkmonitor: gdkmonitor, monitor: index }),
     );
 
     SideLeft({ gdkmonitor: App.get_monitors()[0] });
