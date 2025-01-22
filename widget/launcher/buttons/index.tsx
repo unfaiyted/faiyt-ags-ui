@@ -4,6 +4,7 @@ import MaterialIcon from "../../utils/icons/material";
 export interface LauncherButtonProps extends Widget.ButtonProps {
   icon: Gtk.Widget | Widget.Icon;
   content: string;
+  index?: number;
 }
 
 export default function LauncherButton(props: LauncherButtonProps) {
@@ -14,11 +15,7 @@ export default function LauncherButton(props: LauncherButtonProps) {
     >
       <box>
         <box vertical={false}>
-          {/* <label */}
           {props.icon}
-          {/*   className={`icon-material overview-search-results-icon`} */}
-          {/*   label={props.icon} */}
-          {/* /> */}
           <box vertical>
             <label
               halign={Gtk.Align.START}
@@ -29,6 +26,12 @@ export default function LauncherButton(props: LauncherButtonProps) {
             <label
               halign={Gtk.Align.START}
               label={props.content}
+              className={`overview-search-results-txt txt-norm`}
+              truncate={true}
+            />
+            <label
+              halign={Gtk.Align.END}
+              label={props.index?.toString()}
               className={`overview-search-results-txt txt-norm`}
               truncate={true}
             />

@@ -33,40 +33,49 @@ export interface LauncherResultsProps extends Widget.BoxProps {
 }
 
 const apps = new Apps.Apps({
-  nameMultiplier: 2,
-  entryMultiplier: 1,
-  executableMultiplier: 2,
+  // nameMultiplier: 2,
+  // entryMultiplier: 1,
+  // executableMultiplier: 2,
 });
 
 export default function LauncherResults(props: LauncherResultsProps) {
-  const appResults = new VarMap<number, Gtk.Widget>([]);
+  const appResults = new VarMap<number, Apps.Application>([]);
+  const hasResults = Variable(false);
 
   const updateResults = (searchText: string) => {
     print("LauncherResults/Searching for:", searchText);
+
+    appResults.deleteAll();
 
     if (searchText.length > 1) {
       const resultApps = apps.fuzzy_query(searchText);
 
       resultApps.forEach((app, index) => {
-        print("App:", app.name);
-        appResults.set(index, <AppButton app={app} />);
+        print("RESULT-App:", app.name);
+        print("APPINDEX", index);
+        appResults.set(index, app);
       });
+
+      hasResults.set(resultApps.length > 0);
     }
   };
 
   const debouncedUpdate = debounce(updateResults, 200);
-  props.searchText.subscribe(debouncedUpdate);
+  const sub = props.searchText.subscribe(debouncedUpdate);
+
+  const setupResults = (self: Widget.Revealer) => {};
 
   return (
     <revealer
+      setup={setupResults}
       transitionDuration={config.animations.durationLarge}
-      revealChild={true}
+      revealChild={bind(hasResults)}
       transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
       halign={Gtk.Align.CENTER}
     >
       <box className="overview-search-results" vertical>
         {bind(appResults).as((v) => {
-          return v.map(([num, app]) => app);
+          return v.map(([num, app]) => <AppButton index={num} app={app} />);
         })}
       </box>
     </revealer>

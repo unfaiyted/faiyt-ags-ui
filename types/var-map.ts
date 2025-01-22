@@ -39,6 +39,12 @@ export class VarMap<K, T = Gtk.Widget> implements Subscribable {
     this.#notifiy();
   }
 
+  setMany(entries: [K, T][]) {
+    for (const [key, value] of entries) {
+      this.set(key, value);
+    }
+  }
+
   delete(key: K) {
     this.#delete(key);
     this.#notifiy();
@@ -51,6 +57,10 @@ export class VarMap<K, T = Gtk.Widget> implements Subscribable {
 
   get() {
     return [...this.#map.entries()];
+  }
+
+  getByKey(key: K) {
+    return this.#map.get(key);
   }
 
   subscribe(callback: (v: Array<[K, T]>) => void) {

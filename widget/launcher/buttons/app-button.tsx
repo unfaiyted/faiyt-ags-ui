@@ -4,6 +4,7 @@ import Apps from "gi://AstalApps";
 
 export interface AppButtonProps extends Widget.ButtonProps {
   app: Apps.Application;
+  index: number;
 }
 
 export default function AppButton(props: AppButtonProps) {
