@@ -30,6 +30,7 @@ const debounce = <T extends (...args: any[]) => void>(
 
 export interface LauncherResultsProps extends Widget.BoxProps {
   searchText: Binding<string>;
+  maxResults: number;
 }
 
 const apps = new Apps.Apps({
@@ -40,43 +41,75 @@ const apps = new Apps.Apps({
 
 export default function LauncherResults(props: LauncherResultsProps) {
   const appResults = new VarMap<number, Apps.Application>([]);
-  const hasResults = Variable(false);
+  const revealResults = Variable(false);
 
   const updateResults = (searchText: string) => {
-    print("LauncherResults/Searching for:", searchText);
-
     appResults.deleteAll();
 
     if (searchText.length > 1) {
       const resultApps = apps.fuzzy_query(searchText);
 
       resultApps.forEach((app, index) => {
-        print("RESULT-App:", app.name);
-        print("APPINDEX", index);
+        if (index > 10) return;
         appResults.set(index, app);
       });
 
-      hasResults.set(resultApps.length > 0);
+      revealResults.set(resultApps.length > 0);
     }
   };
+
+  props.searchText.subscribe(() => {
+    if (props.searchText.get().length > 1) {
+      revealResults.set(true);
+      return;
+    }
+    revealResults.set(false);
+  });
 
   const debouncedUpdate = debounce(updateResults, 200);
   const sub = props.searchText.subscribe(debouncedUpdate);
 
   const setupResults = (self: Widget.Revealer) => {};
 
+  revealResults.subscribe((v) => {
+    if (!v) appResults.deleteAll();
+  });
+
   return (
     <revealer
       setup={setupResults}
       transitionDuration={config.animations.durationLarge}
-      revealChild={bind(hasResults)}
+      revealChild={bind(revealResults)}
       transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
       halign={Gtk.Align.CENTER}
     >
-      <box className="overview-search-results" vertical>
-        {bind(appResults).as((v) => {
-          return v.map(([num, app]) => <AppButton index={num} app={app} />);
-        })}
+      <box
+        className="overview-search-results"
+        css={`
+          min-height: 30rem;
+        `} // TODO: make configurable seems to be 6 on my monitor and setup. Might want to look into this moer to check on laptop and such
+        vertical
+      >
+        <scrollable
+          hexpand
+          vscroll={Gtk.PolicyType.AUTOMATIC}
+          hscroll={Gtk.PolicyType.NEVER}
+          vexpand
+        >
+          <box vexpand homogeneous>
+            <box
+              className="spacing-v-5-revealer"
+              valign={Gtk.Align.START}
+              vertical
+            >
+              {bind(appResults).as((v) => {
+                return v.map(([num, app]) => (
+                  <AppButton index={num} app={app} />
+                ));
+              })}
+            </box>
+          </box>
+        </scrollable>
       </box>
     </revealer>
   );

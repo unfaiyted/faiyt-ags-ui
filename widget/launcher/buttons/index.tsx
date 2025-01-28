@@ -10,6 +10,7 @@ export interface LauncherButtonProps extends Widget.ButtonProps {
 export default function LauncherButton(props: LauncherButtonProps) {
   return (
     <button
+      {...props}
       className={`overview-search-result-btn txt ${props.className}`}
       onClick={props.onClick}
     >

@@ -35,7 +35,10 @@ export default function LauncherBar(launcherProps: LauncherProps) {
   };
 
   isVisible.subscribe((v) => {
-    if (v) placeholderText.set("Type to Search");
+    if (v) {
+      searchText.set("");
+      placeholderText.set("Type to Search");
+    }
   });
 
   return (
@@ -115,7 +118,7 @@ export default function LauncherBar(launcherProps: LauncherProps) {
           {/*   handleClose={() => actions.window.close("launcher")} */}
           {/* /> */}
           {/* <WorkspacesOverview /> */}
-          <LauncherResults searchText={bind(searchText)} />
+          <LauncherResults maxResults={10} searchText={bind(searchText)} />
         </box>
       </box>
     </PopupWindow>
