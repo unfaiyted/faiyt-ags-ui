@@ -1,63 +1,76 @@
-## These fonts will need to be installed on the system
+# Custom Hyprland Desktop Environment
 
-#### TODO: nerd font links
+A modern, customizable desktop environment built for Hyprland using Ags/Astal framework.
 
-```css
-@mixin titlefont {
-    // Geometric sans-serif
-    font-family: "Gabarito", "Poppins", "Readex Pro", "Lexend", sans-serif;
-}
+## Features
 
-@mixin mainfont {
-    // Other clean sans-serif
-    font-family: "Rubik", "Geist", "AR One Sans", "Reddit Sans", "Inter",
-        "Roboto", "Ubuntu", "Noto Sans", sans-serif;
-    // font-weight: 500;
-}
+- Custom top bar with workspace switching
+- App launcher with search functionality
+- Overlay window system
+- Sidebar with integrated AI chat capabilities
+- Icon handling and customization
+- Material Design and Phosphor icon integration
 
-@mixin icon-material {
-    // Material Design Icons
-    font-family: "Material Symbols Rounded", "MaterialSymbolsRounded", "Material Symbols Outlined",
-        "Material Symbols Sharp";
-}
+## Prerequisites
 
-@mixin icon-phosphor {
-  // Phosphor Icons
-  font-family: "Phosphor", "Phosphor-Bold", "Phosphor-Duotone","Phoshphor-Outline","Phosphor-Fill","Phosphor-Thin"
-}
+### Required Dependencies
+- [Hyprland](https://hyprland.org/)
+- [Ags/Astal](https://github.com/Aylur/ags)
 
+### Optional Dependencies
+- [Grimblast](https://github.com/hyprwm/contrib/tree/main/grimblast) - For screenshot functionality
 
-@mixin icon-nerd {
-    // Nerd Fonts
-    font-family: "SpaceMono NF", "SpaceMono Nerd Font", "JetBrains Mono NF",
-        "JetBrains Mono Nerd Font", monospace;
-}
+### Required Fonts
+The following fonts need to be installed on your system:
 
-@mixin techfont {
-    // Monospace for sys info n stuff. Doesn't have to be a nerd font, but it's cool.
-    font-family: "JetBrains Mono NF", "JetBrains Mono Nerd Font",
-        "JetBrains Mono NL", "SpaceMono NF", "SpaceMono Nerd Font", monospace;
-}
+#### UI Fonts
+- Gabarito
+- Poppins
+- Readex Pro
+- Lexend
+- Rubik
+- Geist
+- AR One Sans
+- Reddit Sans
+- Inter
+- Roboto
+- Ubuntu
+- Noto Sans
 
-@mixin readingfont {
-    // The most readable fonts, for a comfortable reading experience
-    // in stuff like AI chat on sidebar
-    font-family: "Readex Pro", "Lexend", "Noto Sans", sans-serif;
-    // font-weight: 500;
-}
+#### Icon Fonts
+- Material Symbols (Rounded, Outlined, Sharp)
+- Phosphor Icons
+- Nerd Fonts (SpaceMono NF, JetBrains Mono NF)
 
-@mixin subtext {
-    color: colors.$subtext;
-}
+## Installation
+
+1. Clone the repository:
+```bash
+git clone git@github.com:unfaiyted/faiyt-ags-ui.git
 ```
 
-## Default Configuration
+## Configuration
+The project uses various configuration files for customization:
 
-**Required:**
+user-options.ts - User-specific settings
+app.ts - Main application configuration
+Various SCSS files for styling
+Development
+The project structure is organized into several directories:
 
-- Hyprland
-- Ags/Astal
+assets/ - Static resources
+handlers/ - Event handling logic
+scripts/ - Utility scripts
+scss/ - Styling and theming
+services/ - Backend services
+types/ - TypeScript type definitions
+utils/ - Helper functions
+widget/ - UI components
+Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-**Optional:**
 
-- Grimblast (screenshots) <https://github.com/hyprwm/contrib/tree/main/grimblast>
+## Acknowledgments
+Hyprland team
+Ags/Astal framework developers
+Icon and font creators
